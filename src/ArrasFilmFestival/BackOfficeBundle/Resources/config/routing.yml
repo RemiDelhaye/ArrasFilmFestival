@@ -1,0 +1,14 @@
+back_office_home:
+    pattern:  /
+    defaults: { _controller: BackOfficeBundle:Page:home }
+
+back_office_photo_new:
+    pattern:  /photo
+    defaults: { _controller: BackOfficeBundle:Photo:new }
+
+back_office_photo_create:
+    pattern:  /content/update
+    defaults: { _controller: BackOfficeBundle:Photo:create }
+    requirements:
+        _method:  POST
+

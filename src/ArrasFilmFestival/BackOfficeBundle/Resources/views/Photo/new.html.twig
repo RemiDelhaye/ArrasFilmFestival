@@ -1,0 +1,58 @@
+{% extends '::template_back.html.twig' %}
+
+{% block body %}
+<div class="row">
+	<div class="span8 offset2">
+		<form class="form-horizontal" action="{{ path('back_office_photo_create') }}" method="post" {{ form_enctype(form) }}>
+		    <fieldset>
+		    	<legend>Ajouter des photos</legend>
+
+		    	<div class="control-group">
+			    	{{ form_label(form.image.file, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+			    	<div class="controls">
+				    	{{ form_widget(form.image.file, { 'attr': { 'class': 'span4' } }) }}
+				    </div>
+				    {{ form_errors(form.image.file) }}
+				</div>
+
+		    	<div class="control-group">
+			    	{{ form_label(form.title, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+			    	<div class="controls">
+				    	{{ form_widget(form.title, { 'attr': { 'placeholder': 'Titre du projet', 'class': 'span4' } }) }}
+				    </div>
+				    {{ form_errors(form.title) }}
+				</div>
+
+				<div class="control-group">
+				    {{ form_label(form.content, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+				    <div class="controls">
+				    	{{ form_widget(form.content, { 'attr': { 'placeholder': 'Description', 'class': 'span4' } }) }}
+				    </div>
+				    {{ form_errors(form.content) }}
+				</div>
+
+				<div class="control-group">
+				    {{ form_label(form.role, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+				    <div class="controls">
+				    	{{ form_widget(form.role, { 'attr': { 'placeholder': 'Rôle dans le projet', 'class': 'span4' } }) }}
+				    </div>
+				    {{ form_errors(form.role) }}
+				</div>
+
+				<div class="control-group">
+				    {{ form_label(form.technologies, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+				    <div class="controls">
+				    	{{ form_widget(form.technologies, { 'attr': { 'placeholder': 'Technologies employées', 'class': 'span4' } }) }}
+				    </div>
+				    {{ form_errors(form.technologies) }}
+				</div>
+
+				<div class="form-actions">
+				  	<input type="submit" class="btn btn-primary" />
+			    	<input type="reset" class="btn" />
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+{% endblock %}

@@ -14,7 +14,7 @@ class PhotoController extends Controller
     public function newAction()
     {
     	$content = new Content();
-    	$form = $this->createForm(new ContentType(), $conten);
+    	$form = $this->createForm(new ContentType(), $content);
     }
 
     public function createAction()

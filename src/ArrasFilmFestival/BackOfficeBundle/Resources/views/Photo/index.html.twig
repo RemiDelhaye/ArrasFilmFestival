@@ -6,7 +6,7 @@
 
 <h1>Photos</h1>
 
-<a href="{{ path('photo_new') }}" class="btn btn-block">
+<a href="{{ path('photo_new') }}" class="btn btn-block btn-large">
     <i class="icon-plus"></i> Ajouter une photo
 </a>
 
@@ -24,7 +24,7 @@
     {% set compte = compte+1 %}
 
     <article class="span4">
-        <div class="thumbnail article-image">
+        <div class="thumbnail article-photo">
             <h4>{{ entity.title }}</h4>
             <img src="{{ asset('uploads/photos/') }}{{entity.path}}" alt="{{ entity.title }}" />
             <p>{{ entity.content }}</p>

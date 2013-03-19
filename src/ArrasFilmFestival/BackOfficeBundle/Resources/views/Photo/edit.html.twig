@@ -41,23 +41,31 @@
                     {{ form_widget(edit_form._token) }}
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i></button>
-                    <button type="reset" class="btn"><i class="icon-refresh"></i></button>
+                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Modifier</button>
+                    <button type="reset" class="btn"><i class="icon-refresh"></i> Vider</button>
+                    <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>
                 </div>
             </fieldset>
         </form>
     </div>
 </div>
 
-<ul class="record_actions">
-
-    <form action="{{ path('photo_delete', { 'id': entity.id }) }}" method="post">
-        {{ form_widget(delete_form) }}
-        <a href="{{ path('photo') }}" class="btn">
-                        <i class="icon-list"></i>
-                    </a>
-        <button type="submit" class="btn btn-danger"><i class="icon-trash"></i></button>
-    </form>
-</ul>
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Supprimer la photo</h3>
+    </div>
+    <div class="modal-body">
+        <p>Voulez-vous vraiment supprimer cette photo ?</p>
+        <p><i class="icon-warning-sign"></i> Attention, ceci est irréversible !</p>
+    </div>
+    <div class="modal-footer">
+        <form action="{{ path('photo_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

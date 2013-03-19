@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table()
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Podcast
 {
@@ -51,17 +52,20 @@ class Podcast
     private $path;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="podcasts")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="photos")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
      * @Assert\NotNull()
-     * @Assert\File(maxSize="600000000000000000")
+     * @Assert\File(
+     *     maxSize = "10000k",
+     *     mimeTypes = {"audio/mpeg"},
+     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format MP3."
+     * )
      */
     public $audio;
-
 
     /**
      * Get id
@@ -77,7 +81,7 @@ class Podcast
      * Set title
      *
      * @param string $title
-     * @return Podcast
+     * @return Photo
      */
     public function setTitle($title)
     {
@@ -100,7 +104,7 @@ class Podcast
      * Set content
      *
      * @param string $content
-     * @return Podcast
+     * @return Photo
      */
     public function setContent($content)
     {
@@ -123,7 +127,7 @@ class Podcast
      * Set created
      *
      * @param \DateTime $created
-     * @return Podcast
+     * @return Photo
      */
     public function setCreated($created)
     {
@@ -146,7 +150,7 @@ class Podcast
      * Set path
      *
      * @param string $path
-     * @return Podcast
+     * @return Photo
      */
     public function setPath($path)
     {
@@ -169,7 +173,7 @@ class Podcast
      * Set user
      *
      * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $user
-     * @return Podcast
+     * @return Photo
      */
     public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = null)
     {
@@ -188,7 +192,7 @@ class Podcast
         return $this->user;
     }
 
-  public function getAbsolutePath()
+    public function getAbsolutePath()
     {
         return null === $this->path
             ? null

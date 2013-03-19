@@ -2,10 +2,6 @@ photo:
     pattern:  /
     defaults: { _controller: "BackOfficeBundle:Photo:index" }
 
-photo_show:
-    pattern:  /{id}/show
-    defaults: { _controller: "BackOfficeBundle:Photo:show" }
-
 photo_new:
     pattern:  /new
     defaults: { _controller: "BackOfficeBundle:Photo:new" }
@@ -16,15 +12,15 @@ photo_create:
     requirements: { _method: post }
 
 photo_edit:
-    pattern:  /{id}/edit
+    pattern:  /edit/{id}
     defaults: { _controller: "BackOfficeBundle:Photo:edit" }
 
 photo_update:
-    pattern:  /{id}/update
+    pattern:  /update/{id}
     defaults: { _controller: "BackOfficeBundle:Photo:update" }
     requirements: { _method: post }
 
 photo_delete:
-    pattern:  /{id}/delete
+    pattern:  /delete/{id}
     defaults: { _controller: "BackOfficeBundle:Photo:delete" }
     requirements: { _method: post }

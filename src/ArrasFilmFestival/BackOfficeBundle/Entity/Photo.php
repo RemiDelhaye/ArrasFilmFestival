@@ -58,8 +58,12 @@ class Photo
     private $user;
 
     /**
-     * @Assert\NotNull()
-     * @Assert\Image(maxSize="6000000")
+     * @Assert\File(
+     *     maxSize = "2048k",
+     *     maxSizeMessage = "Les fichiers ne doivent pas dépasser 2 Mo.",  
+     *     mimeTypes = {"image/png", "image/jpeg"},
+     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format png ou jpeg."
+     * )
      */
     public $image;
 

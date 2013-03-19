@@ -1,16 +1,43 @@
-<h1>Video creation</h1>
+{% extends '::template_back.html.twig' %}
 
-<form action="{{ path('video_create') }}" method="post" {{ form_enctype(form) }}>
-    {{ form_widget(form) }}
-    <p>
-        <button type="submit">Create</button>
-    </p>
-</form>
+{% block body %}
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('video') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+{%- if form_errors(form.video) != null -%}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Attention !</strong> {{ form_errors(form.video) }}
+</div>
+{%- endif -%}
+
+<div class="row">
+	<div class="span8 offset2">
+		<form class="form-horizontal" action="{{ path('podcast_create') }}" method="post" {{ form_enctype(form) }}>
+		    <fieldset>
+		    	<legend>Ajouter une vidéo</legend>
+
+		    	<div class="control-group">
+			    	{{ form_label(form.video, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+			    	<div class="controls">
+				    	{{ form_widget(form.video, { 'attr': { 'class': 'span4' } }) }}
+				    </div>
+				</div>
+
+		    	<div class="control-group">
+			    	{{ form_label(form.title, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+			    	<div class="controls">
+				    	{{ form_widget(form.title, { 'attr': { 'placeholder': 'Titre de la vidéo', 'class': 'span4' } }) }}
+				    </div>
+				</div>
+
+					{{ form_widget(form._token) }}
+
+				<div class="form-actions">
+				  	<button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Ajouter la vidéo</button>
+                    <button type="reset" class="btn"><i class="icon-refresh"></i> Vider</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

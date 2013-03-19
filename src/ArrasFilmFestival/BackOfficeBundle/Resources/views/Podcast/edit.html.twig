@@ -1,22 +1,58 @@
-<h1>Podcast edit</h1>
+{% extends '::template_back.html.twig' %}
 
-<form action="{{ path('podcast_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-    {{ form_widget(edit_form) }}
-    <p>
-        <button type="submit">Edit</button>
-    </p>
-</form>
+{% block body %}
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('podcast') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <form action="{{ path('podcast_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
+{%- if form_errors(edit_form.audio) != null -%}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Attention !</strong> {{ form_errors(edit_form.audio) }}
+</div>
+{%- endif -%}
+
+
+<div class="row">
+    <div class="span8 offset2">
+        <form class="form-horizontal" action="{{ path('podcast_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            <fieldset>
+                <legend>Modifier le podcast</legend>
+
+                <div class="control-group">
+                    <audio controls>
+                        <source src="{{ asset('uploads/audios/') }}{{entity.path}}" type="audio/mpeg">
+                        Votre navigateur n'est pas capable de supporter les mp3.
+                     </audio>
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.audio, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.audio, { 'attr': { 'class': 'span4' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.title, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.title, { 'attr': { 'placeholder': 'Titre de la photo', 'class': 'span4' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.content, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.content, { 'attr': { 'placeholder': 'Description de la photo', 'class': 'span4' } }) }}
+                    </div>
+                </div>
+
+                    {{ form_widget(edit_form._token) }}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Valider les modifications</button>
+                    <button type="reset" class="btn"><i class="icon-refresh"></i> Réinitialiser</button>
+                </div>
+            </fieldset>
         </form>
-    </li>
-</ul>
+    </div>
+</div>
+
+{% endblock %}

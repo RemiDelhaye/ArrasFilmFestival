@@ -2,10 +2,6 @@ video:
     pattern:  /
     defaults: { _controller: "BackOfficeBundle:Video:index" }
 
-video_show:
-    pattern:  /{id}/show
-    defaults: { _controller: "BackOfficeBundle:Video:show" }
-
 video_new:
     pattern:  /new
     defaults: { _controller: "BackOfficeBundle:Video:new" }

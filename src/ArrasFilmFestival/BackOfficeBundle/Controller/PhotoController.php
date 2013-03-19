@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use ArrasFilmFestival\BackOfficeBundle\Entity\Photo;
-use ArrasFilmFestival\BackOfficeBundle\Form\PhotoType;
 
 /**
  * Photo controller.
@@ -21,33 +20,18 @@ class PhotoController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $deleteForm = null;
 
         $entities = $em->getRepository('BackOfficeBundle:Photo')->findAll();
 
-        return $this->render('BackOfficeBundle:Photo:index.html.twig', array(
-            'entities' => $entities,
-        ));
-    }
-
-    /**
-     * Finds and displays a Photo entity.
-     *
-     */
-    public function showAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('BackOfficeBundle:Photo')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Photo entity.');
+        foreach($entities as $entity){
+            $deleteForm[] = $this->createDeleteForm($entity->getId())->createView();
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-
-        return $this->render('BackOfficeBundle:Photo:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+        return $this->render('BackOfficeBundle:Photo:index.html.twig', array(
+            'entities'      => $entities,
+            'delete_forms'  => $deleteForm,
+        ));
     }
 
     /**
@@ -57,7 +41,7 @@ class PhotoController extends Controller
     public function newAction()
     {
         $entity = new Photo();
-        $form   = $this->createForm(new PhotoType(), $entity);
+        $form   = $this->createFormEntity($entity);
 
         return $this->render('BackOfficeBundle:Photo:new.html.twig', array(
             'entity' => $entity,
@@ -72,7 +56,7 @@ class PhotoController extends Controller
     public function createAction(Request $request)
     {
         $entity  = new Photo();
-        $form = $this->createForm(new PhotoType(), $entity);
+        $form = $this->createFormEntity($entity);
         $form->bind($request);
         $entity->setCreated(new \DateTime('now'));
 
@@ -81,7 +65,7 @@ class PhotoController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('photo_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('photo'));
         }
 
         return $this->render('BackOfficeBundle:Photo:new.html.twig', array(
@@ -101,16 +85,14 @@ class PhotoController extends Controller
         $entity = $em->getRepository('BackOfficeBundle:Photo')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Photo entity.');
+            throw $this->createNotFoundException("La photo désirée n'existe pas.");
         }
 
-        $editForm = $this->createForm(new PhotoType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $editForm = $this->createFormEntity($entity, false);
 
         return $this->render('BackOfficeBundle:Photo:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -125,24 +107,22 @@ class PhotoController extends Controller
         $entity = $em->getRepository('BackOfficeBundle:Photo')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Photo entity.');
+            throw $this->createNotFoundException("La photo désirée n'existe pas.");
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createForm(new PhotoType(), $entity);
+        $editForm = $this->createFormEntity($entity, false);
         $editForm->bind($request);
 
         if ($editForm->isValid()) {
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('photo_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('photo'));
         }
 
         return $this->render('BackOfficeBundle:Photo:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -152,6 +132,7 @@ class PhotoController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
+
         $form = $this->createDeleteForm($id);
         $form->bind($request);
 
@@ -160,7 +141,7 @@ class PhotoController extends Controller
             $entity = $em->getRepository('BackOfficeBundle:Photo')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Photo entity.');
+                throw $this->createNotFoundException("La photo désirée n'existe pas.");
             }
 
             $em->remove($entity);
@@ -175,6 +156,16 @@ class PhotoController extends Controller
         return $this->createFormBuilder(array('id' => $id))
             ->add('id', 'hidden')
             ->getForm()
+        ;
+    }
+
+    private function createFormEntity($entity, $validate = true)
+    {  
+        return $form = $this->createFormBuilder($entity)
+                ->add('title', null, array('label' => 'Titre'))
+                ->add('content', null, array('label' => 'Description'))
+                ->add('image', null, array('label' => 'Photo', 'required' => $validate))
+                ->getForm()
         ;
     }
 }

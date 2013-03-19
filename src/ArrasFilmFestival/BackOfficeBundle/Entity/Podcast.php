@@ -52,17 +52,17 @@ class Podcast
     private $path;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="photos")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="Podcasts")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
-     * @Assert\NotNull()
      * @Assert\File(
-     *     maxSize = "10000k",
+     *     maxSize = "30720k",
+     *     maxSizeMessage = "Le fichier ne doit pas dépasser 30Mo, veuillez en choisir un autre.",
      *     mimeTypes = {"audio/mpeg"},
-     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format MP3."
+     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format mp3."
      * )
      */
     public $audio;
@@ -81,7 +81,7 @@ class Podcast
      * Set title
      *
      * @param string $title
-     * @return Photo
+     * @return Podcast
      */
     public function setTitle($title)
     {
@@ -104,7 +104,7 @@ class Podcast
      * Set content
      *
      * @param string $content
-     * @return Photo
+     * @return Podcast
      */
     public function setContent($content)
     {
@@ -127,7 +127,7 @@ class Podcast
      * Set created
      *
      * @param \DateTime $created
-     * @return Photo
+     * @return Podcast
      */
     public function setCreated($created)
     {
@@ -150,7 +150,7 @@ class Podcast
      * Set path
      *
      * @param string $path
-     * @return Photo
+     * @return Podcast
      */
     public function setPath($path)
     {
@@ -173,7 +173,7 @@ class Podcast
      * Set user
      *
      * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $user
-     * @return Photo
+     * @return Podcast
      */
     public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = null)
     {

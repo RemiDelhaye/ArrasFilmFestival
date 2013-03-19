@@ -1,0 +1,30 @@
+photo:
+    pattern:  /
+    defaults: { _controller: "BackOfficeBundle:Photo:index" }
+
+photo_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "BackOfficeBundle:Photo:show" }
+
+photo_new:
+    pattern:  /new
+    defaults: { _controller: "BackOfficeBundle:Photo:new" }
+
+photo_create:
+    pattern:  /create
+    defaults: { _controller: "BackOfficeBundle:Photo:create" }
+    requirements: { _method: post }
+
+photo_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "BackOfficeBundle:Photo:edit" }
+
+photo_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "BackOfficeBundle:Photo:update" }
+    requirements: { _method: post }
+
+photo_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "BackOfficeBundle:Photo:delete" }
+    requirements: { _method: post }

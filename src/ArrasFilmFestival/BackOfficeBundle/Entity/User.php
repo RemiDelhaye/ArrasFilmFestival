@@ -53,13 +53,12 @@ class User
      * @ORM\ManyToOne(targetEntity="Team", inversedBy="users")
      * @ORM\JoinColumn(name="team_id", referencedColumnName="id")
      */
-    protected $team;
+    private $team;
 
     /**
-     * @ORM\OneToMany(targetEntity="Media", mappedBy="user")
-     **/
-    private $medias;
-
+     * @ORM\OneToMany(targetEntity="Photo", mappedBy="user")
+     */
+    private $photos;
 
     /**
      * Get id
@@ -224,5 +223,38 @@ class User
     public function getMedias()
     {
         return $this->medias;
+    }
+
+    /**
+     * Add photos
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photos
+     * @return User
+     */
+    public function addPhoto(\ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photos)
+    {
+        $this->photos[] = $photos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove photos
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photos
+     */
+    public function removePhoto(\ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photos)
+    {
+        $this->photos->removeElement($photos);
+    }
+
+    /**
+     * Get photos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPhotos()
+    {
+        return $this->photos;
     }
 }

@@ -104,20 +104,72 @@ class appdevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
 
         }
 
-        if (0 === strpos($pathinfo, '/panel')) {
-            // back_office_home
-            if (rtrim($pathinfo, '/') === '/panel') {
+        // back_office_home
+        if (rtrim($pathinfo, '/') === '/panel') {
+            if (substr($pathinfo, -1) !== '/') {
+                return $this->redirect($pathinfo.'/', 'back_office_home');
+            }
+
+            return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PageController::homeAction',  '_route' => 'back_office_home',);
+        }
+
+        if (0 === strpos($pathinfo, '/panel/photo')) {
+            // photo
+            if (rtrim($pathinfo, '/') === '/panel/photo') {
                 if (substr($pathinfo, -1) !== '/') {
-                    return $this->redirect($pathinfo.'/', 'back_office_home');
+                    return $this->redirect($pathinfo.'/', 'photo');
                 }
 
-                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PageController::homeAction',  '_route' => 'back_office_home',);
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::indexAction',  '_route' => 'photo',);
             }
 
-            // back_office_photo_article
-            if ($pathinfo === '/panel/photo') {
-                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::newAction',  '_route' => 'back_office_photo_article',);
+            // photo_show
+            if (preg_match('#^/panel/photo/(?P<id>[^/]+)/show$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::showAction',)), array('_route' => 'photo_show'));
             }
+
+            // photo_new
+            if ($pathinfo === '/panel/photo/new') {
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::newAction',  '_route' => 'photo_new',);
+            }
+
+            // photo_create
+            if ($pathinfo === '/panel/photo/create') {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_photo_create;
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::createAction',  '_route' => 'photo_create',);
+            }
+            not_photo_create:
+
+            // photo_edit
+            if (preg_match('#^/panel/photo/(?P<id>[^/]+)/edit$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::editAction',)), array('_route' => 'photo_edit'));
+            }
+
+            // photo_update
+            if (preg_match('#^/panel/photo/(?P<id>[^/]+)/update$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_photo_update;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::updateAction',)), array('_route' => 'photo_update'));
+            }
+            not_photo_update:
+
+            // photo_delete
+            if (preg_match('#^/panel/photo/(?P<id>[^/]+)/delete$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_photo_delete;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::deleteAction',)), array('_route' => 'photo_delete'));
+            }
+            not_photo_delete:
 
         }
 

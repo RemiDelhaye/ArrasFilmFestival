@@ -2,27 +2,62 @@
 
 {% block body %}
 
-<h1>Photo edit</h1>
+<h1>Modification</h1>
 
-<form action="{{ path('photo_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-    {{ form_widget(edit_form) }}
-    <p>
-        <button type="submit">Edit</button>
-    </p>
-</form>
+<div class="row">
+    <div class="span8 offset2">
+        <form class="form-horizontal" action="{{ path('photo_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            <fieldset>
+                <legend>Modifier la photo</legend>
+
+                <img src="{{ asset('uploads/photos/') }}{{entity.path}}" alt="{{ entity.title }}" class="img-polaroid span4 offset2">
+
+                {{ form_errors(edit_form) }}
+
+                <div class="control-group">
+                    {{ form_label(edit_form.image, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.image, { 'attr': { 'class': 'span4' } }) }}
+                    </div>
+                    {{ form_errors(edit_form.image) }}
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.title, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.title, { 'attr': { 'placeholder': 'Titre de la photo', 'class': 'span4' } }) }}
+                    </div>
+                    {{ form_errors(edit_form.title) }}
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.content, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.content, { 'attr': { 'placeholder': 'Description de la photo', 'class': 'span4' } }) }}
+                    </div>
+                    {{ form_errors(edit_form.content) }}
+                </div>
+
+                    {{ form_widget(edit_form._token) }}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i></button>
+                    <button type="reset" class="btn"><i class="icon-refresh"></i></button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
 
 <ul class="record_actions">
-    <li>
-        <a href="{{ path('photo') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <form action="{{ path('photo_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
-        </form>
-    </li>
+
+    <form action="{{ path('photo_delete', { 'id': entity.id }) }}" method="post">
+        {{ form_widget(delete_form) }}
+        <a href="{{ path('photo') }}" class="btn">
+                        <i class="icon-list"></i>
+                    </a>
+        <button type="submit" class="btn btn-danger"><i class="icon-trash"></i></button>
+    </form>
 </ul>
 
 {% endblock %}

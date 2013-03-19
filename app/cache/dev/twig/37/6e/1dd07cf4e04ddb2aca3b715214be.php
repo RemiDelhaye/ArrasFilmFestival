@@ -29,102 +29,76 @@ class __TwigTemplate_376e1dd07cf4e04ddb2aca3b715214be extends Twig_Template
     {
         // line 4
         echo "
+";
+        // line 5
+        $context["compte"] = 1;
+        // line 6
+        echo "
 <h1>Photos</h1>
 
-<table class=\"table table-striped table-bordered\">
-    <thead>
-        <tr>
-            <th>Titre</th>
-            <th>Description</th>
-            <th>Crée le</th>
-            <th>Image</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
+<a href=\"";
+        // line 9
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_new"), "html", null, true);
+        echo "\" class=\"btn btn-block\">
+    <i class=\"icon-plus\"></i> Ajouter une photo
+</a>
+
+<section class=\"thumbnails section-photo\">
+
     ";
-        // line 18
+        // line 15
         $context['_parent'] = (array) $context;
         $context['_seq'] = twig_ensure_traversable((isset($context["entities"]) ? $context["entities"] : $this->getContext($context, "entities")));
         foreach ($context['_seq'] as $context["_key"] => $context["entity"]) {
-            // line 19
-            echo "        <tr>
-            <td>";
-            // line 20
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "title"), "html", null, true);
-            echo "</td>
-            <td>";
-            // line 21
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "content"), "html", null, true);
-            echo "</td>
-            <td>";
-            // line 22
-            if ($this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "created")) {
-                echo twig_escape_filter($this->env, twig_date_format_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "created"), "d/m/Y à H:i:s"), "html", null, true);
+            // line 17
+            if (((isset($context["compte"]) ? $context["compte"] : $this->getContext($context, "compte")) == 4)) {
+                // line 18
+                $context["compte"] = 1;
+                // line 19
+                echo "
+</section>
+<section class=\"thumbnails section-photo\">";
             }
-            echo "</td>
-            <td><img src=\"";
-            // line 23
+            // line 24
+            $context["compte"] = ((isset($context["compte"]) ? $context["compte"] : $this->getContext($context, "compte")) + 1);
+            // line 25
+            echo "
+    <article class=\"span4\">
+        <div class=\"thumbnail article-image\">
+            <h4>";
+            // line 28
+            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "title"), "html", null, true);
+            echo "</h4>
+            <img src=\"";
+            // line 29
             echo twig_escape_filter($this->env, $this->env->getExtension('assets')->getAssetUrl("uploads/photos/"), "html", null, true);
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "path"), "html", null, true);
             echo "\" alt=\"";
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "title"), "html", null, true);
-            echo "\" width=\"300px\"/></td>
-            <td>
-                <a href=\"";
-            // line 25
-            echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_show", array("id" => $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "id"))), "html", null, true);
-            echo "\" class=\"btn\" ><i class=\"icon-search\"></i></a>  
-                <a href=\"";
-            // line 26
-            echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_edit", array("id" => $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "id"))), "html", null, true);
-            echo "\" class=\"btn\" ><i class=\"icon-edit\"></i></a>  
-                <a href=\"#myModal";
-            // line 27
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "title"), "html", null, true);
-            echo "\" role=\"button\" class=\"btn\" data-toggle=\"modal\"><i class=\"icon-trash\"></i></a>
-            </td>
-        </tr>
-
-        <div id=\"myModal";
+            echo "\" />
+            <p>";
+            // line 30
+            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "content"), "html", null, true);
+            echo "</p>
+            <p><small><em>";
             // line 31
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "title"), "html", null, true);
-            echo "\" class=\"modal hide fade\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\">
-          <div class=\"modal-header\">
-            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>
-            <h3 id=\"myModalLabel\">Supprimer une photo</h3>
-          </div>
-          <div class=\"modal-body\">
-            <p>Voulez-vous vraiment supprimer la photo \"";
-            // line 37
-            echo twig_escape_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "title"), "html", null, true);
-            echo "\" ?</p>
-            <p><i class=\"icon-warning-sign\"></i> <em>Attention ! Cette action est irréversible !</em></p>
-          </div>
-          <div class=\"modal-footer\">
-            <button class=\"btn\" data-dismiss=\"modal\" aria-hidden=\"true\">Annuler</button>
+            echo twig_escape_filter($this->env, twig_date_format_filter($this->env, $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "created"), "d/m/Y à H:i:s"), "html", null, true);
+            echo "</em></small></p>  
             <a href=\"";
-            // line 42
+            // line 32
             echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_edit", array("id" => $this->getAttribute((isset($context["entity"]) ? $context["entity"] : $this->getContext($context, "entity")), "id"))), "html", null, true);
-            echo "\" class=\"btn btn-danger\">Supprimer cette photo <i class=\"icon-remove icon-white\"></i></a>
-          </div>
-        </div>
+            echo "\" class=\"btn btn-block\" ><i class=\"icon-edit\"></i> Modifier</a>
+        </div>  
+    </article>
 
     ";
         }
         $_parent = $context['_parent'];
         unset($context['_seq'], $context['_iterated'], $context['_key'], $context['entity'], $context['_parent'], $context['loop']);
         $context = array_merge($_parent, array_intersect_key($context, $_parent));
-        // line 47
-        echo "    </tbody>
-</table>
-
-<a href=\"";
-        // line 50
-        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_new"), "html", null, true);
-        echo "\" class=\"btn\">
-    <i class=\"icon-plus\"></i> Ajouter une photo
-</a>
+        // line 37
+        echo "
+</section>
 
 ";
     }
@@ -141,6 +115,6 @@ class __TwigTemplate_376e1dd07cf4e04ddb2aca3b715214be extends Twig_Template
 
     public function getDebugInfo()
     {
-        return array (  124 => 50,  119 => 47,  108 => 42,  100 => 37,  91 => 31,  84 => 27,  80 => 26,  76 => 25,  68 => 23,  62 => 22,  58 => 21,  54 => 20,  51 => 19,  47 => 18,  31 => 4,  28 => 3,);
+        return array (  100 => 37,  89 => 32,  85 => 31,  81 => 30,  74 => 29,  70 => 28,  65 => 25,  63 => 24,  58 => 19,  56 => 18,  54 => 17,  50 => 15,  41 => 9,  36 => 6,  34 => 5,  31 => 4,  28 => 3,);
     }
 }

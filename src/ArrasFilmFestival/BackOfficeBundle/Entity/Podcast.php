@@ -209,7 +209,7 @@ class Podcast
 
     protected function getUploadDir()
     {
-        return 'uploads/photos';
+        return 'uploads/audios';
     }
 
     /**

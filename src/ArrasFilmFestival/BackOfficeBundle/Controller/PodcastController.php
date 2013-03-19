@@ -47,7 +47,8 @@ class PodcastController extends Controller
 
         return $this->render('BackOfficeBundle:Podcast:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        ));
+            'delete_form' => $deleteForm->createView(),        
+        ));
     }
 
     /**
@@ -74,6 +75,8 @@ class PodcastController extends Controller
         $entity  = new Podcast();
         $form = $this->createForm(new PodcastType(), $entity);
         $form->bind($request);
+        
+        $entity->setCreated(new \DateTime('now'));
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();

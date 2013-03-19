@@ -32,7 +32,7 @@ class __TwigTemplate_1da92a3d3510c8c1bc36b49fc1723be8 extends Twig_Template
 \t<div class=\"span8 offset2\">
 \t\t<form class=\"form-horizontal\" action=\"";
         // line 6
-        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_create"), "html", null, true);
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("podcast_create"), "html", null, true);
         echo "\" method=\"post\" ";
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), 'enctype');
         echo ">

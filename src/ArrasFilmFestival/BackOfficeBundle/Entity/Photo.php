@@ -61,7 +61,7 @@ class Photo
      * @Assert\NotNull()
      * @Assert\Image(maxSize="6000000")
      */
-    public $file;
+    public $image;
 
     /**
      * Get id
@@ -165,6 +165,29 @@ class Photo
         return $this->path;
     }
 
+    /**
+     * Set user
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $user
+     * @return Photo
+     */
+    public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
     public function getAbsolutePath()
     {
         return null === $this->path
@@ -195,9 +218,9 @@ class Photo
      */
     public function preUpload()
     {
-        if (null !== $this->file) {
-            $filename = sha1(uniqid(mt_rand(), true));
-            $this->path = $filename.'.'.$this->file->guessExtension();
+        if (null !== $this->image) {
+            $imagename = sha1(uniqid(mt_rand(), true));
+            $this->path = $imagename.'.'.$this->image->guessExtension();
         }
     }
 
@@ -207,13 +230,13 @@ class Photo
      */
     public function upload()
     {
-        if (null === $this->file) {
+        if (null === $this->image) {
             return;
         }
 
-        $this->file->move($this->getUploadRootDir(), $this->path);
+        $this->image->move($this->getUploadRootDir(), $this->path);
 
-        unset($this->file);
+        unset($this->image);
     }
 
     /**
@@ -221,31 +244,8 @@ class Photo
      */
     public function removeUpload()
     {
-        if ($file = $this->getAbsolutePath()) {
-            unlink($file);
+        if ($image = $this->getAbsolutePath()) {
+            unlink($image);
         }
-    }
-
-    /**
-     * Set user
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $user
-     * @return Photo
-     */
-    public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = null)
-    {
-        $this->user = $user;
-    
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 }

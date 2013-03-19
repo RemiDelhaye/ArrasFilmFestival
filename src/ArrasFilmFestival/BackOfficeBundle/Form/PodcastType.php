@@ -11,10 +11,11 @@ class PodcastType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title')
-            ->add('content')
+            ->add('title', null, array('label' => 'Titre'))
+            ->add('content', null, array('label' => 'Description'))
             ->add('created')
             ->add('path')
+            ->add('audio', null, array('label' => 'Podcast'))
         ;
     }
 

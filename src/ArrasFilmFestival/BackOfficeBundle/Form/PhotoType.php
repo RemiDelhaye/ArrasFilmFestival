@@ -13,7 +13,7 @@ class PhotoType extends AbstractType
         $builder
             ->add('title', null, array('label' => 'Titre'))
             ->add('content', null, array('label' => 'Contenu'))
-            ->add('file', null, array('label' => 'Photo'))
+            ->add('image', null, array('label' => 'Photo'))
         ;
     }
 

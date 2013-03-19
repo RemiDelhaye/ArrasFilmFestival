@@ -104,6 +104,15 @@ class appdevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
 
         }
 
+        // front_office_homepage
+        if (rtrim($pathinfo, '/') === '') {
+            if (substr($pathinfo, -1) !== '/') {
+                return $this->redirect($pathinfo.'/', 'front_office_homepage');
+            }
+
+            return array (  '_controller' => 'ArrasFilmFestival\\FrontOfficeBundle\\Controller\\PageController::homeAction',  '_route' => 'front_office_homepage',);
+        }
+
         // back_office_home
         if (rtrim($pathinfo, '/') === '/panel') {
             if (substr($pathinfo, -1) !== '/') {
@@ -170,6 +179,306 @@ class appdevUrlMatcher extends Symfony\Bundle\FrameworkBundle\Routing\Redirectab
                 return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PhotoController::deleteAction',)), array('_route' => 'photo_delete'));
             }
             not_photo_delete:
+
+        }
+
+        if (0 === strpos($pathinfo, '/panel/video')) {
+            // video
+            if (rtrim($pathinfo, '/') === '/panel/video') {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'video');
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\VideoController::indexAction',  '_route' => 'video',);
+            }
+
+            // video_show
+            if (preg_match('#^/panel/video/(?P<id>[^/]+)/show$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\VideoController::showAction',)), array('_route' => 'video_show'));
+            }
+
+            // video_new
+            if ($pathinfo === '/panel/video/new') {
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\VideoController::newAction',  '_route' => 'video_new',);
+            }
+
+            // video_create
+            if ($pathinfo === '/panel/video/create') {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_video_create;
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\VideoController::createAction',  '_route' => 'video_create',);
+            }
+            not_video_create:
+
+            // video_edit
+            if (preg_match('#^/panel/video/(?P<id>[^/]+)/edit$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\VideoController::editAction',)), array('_route' => 'video_edit'));
+            }
+
+            // video_update
+            if (preg_match('#^/panel/video/(?P<id>[^/]+)/update$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_video_update;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\VideoController::updateAction',)), array('_route' => 'video_update'));
+            }
+            not_video_update:
+
+            // video_delete
+            if (preg_match('#^/panel/video/(?P<id>[^/]+)/delete$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_video_delete;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\VideoController::deleteAction',)), array('_route' => 'video_delete'));
+            }
+            not_video_delete:
+
+        }
+
+        if (0 === strpos($pathinfo, '/panel/podcast')) {
+            // podcast
+            if (rtrim($pathinfo, '/') === '/panel/podcast') {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'podcast');
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PodcastController::indexAction',  '_route' => 'podcast',);
+            }
+
+            // podcast_show
+            if (preg_match('#^/panel/podcast/(?P<id>[^/]+)/show$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PodcastController::showAction',)), array('_route' => 'podcast_show'));
+            }
+
+            // podcast_new
+            if ($pathinfo === '/panel/podcast/new') {
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PodcastController::newAction',  '_route' => 'podcast_new',);
+            }
+
+            // podcast_create
+            if ($pathinfo === '/panel/podcast/create') {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_podcast_create;
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PodcastController::createAction',  '_route' => 'podcast_create',);
+            }
+            not_podcast_create:
+
+            // podcast_edit
+            if (preg_match('#^/panel/podcast/(?P<id>[^/]+)/edit$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PodcastController::editAction',)), array('_route' => 'podcast_edit'));
+            }
+
+            // podcast_update
+            if (preg_match('#^/panel/podcast/(?P<id>[^/]+)/update$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_podcast_update;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PodcastController::updateAction',)), array('_route' => 'podcast_update'));
+            }
+            not_podcast_update:
+
+            // podcast_delete
+            if (preg_match('#^/panel/podcast/(?P<id>[^/]+)/delete$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_podcast_delete;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\PodcastController::deleteAction',)), array('_route' => 'podcast_delete'));
+            }
+            not_podcast_delete:
+
+        }
+
+        if (0 === strpos($pathinfo, '/panel/article')) {
+            // article
+            if (rtrim($pathinfo, '/') === '/panel/article') {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'article');
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\ArticleController::indexAction',  '_route' => 'article',);
+            }
+
+            // article_show
+            if (preg_match('#^/panel/article/(?P<id>[^/]+)/show$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\ArticleController::showAction',)), array('_route' => 'article_show'));
+            }
+
+            // article_new
+            if ($pathinfo === '/panel/article/new') {
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\ArticleController::newAction',  '_route' => 'article_new',);
+            }
+
+            // article_create
+            if ($pathinfo === '/panel/article/create') {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_article_create;
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\ArticleController::createAction',  '_route' => 'article_create',);
+            }
+            not_article_create:
+
+            // article_edit
+            if (preg_match('#^/panel/article/(?P<id>[^/]+)/edit$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\ArticleController::editAction',)), array('_route' => 'article_edit'));
+            }
+
+            // article_update
+            if (preg_match('#^/panel/article/(?P<id>[^/]+)/update$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_article_update;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\ArticleController::updateAction',)), array('_route' => 'article_update'));
+            }
+            not_article_update:
+
+            // article_delete
+            if (preg_match('#^/panel/article/(?P<id>[^/]+)/delete$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_article_delete;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\ArticleController::deleteAction',)), array('_route' => 'article_delete'));
+            }
+            not_article_delete:
+
+        }
+
+        if (0 === strpos($pathinfo, '/panel/user')) {
+            // user
+            if (rtrim($pathinfo, '/') === '/panel/user') {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'user');
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\UserController::indexAction',  '_route' => 'user',);
+            }
+
+            // user_show
+            if (preg_match('#^/panel/user/(?P<id>[^/]+)/show$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\UserController::showAction',)), array('_route' => 'user_show'));
+            }
+
+            // user_new
+            if ($pathinfo === '/panel/user/new') {
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\UserController::newAction',  '_route' => 'user_new',);
+            }
+
+            // user_create
+            if ($pathinfo === '/panel/user/create') {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_user_create;
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\UserController::createAction',  '_route' => 'user_create',);
+            }
+            not_user_create:
+
+            // user_edit
+            if (preg_match('#^/panel/user/(?P<id>[^/]+)/edit$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\UserController::editAction',)), array('_route' => 'user_edit'));
+            }
+
+            // user_update
+            if (preg_match('#^/panel/user/(?P<id>[^/]+)/update$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_user_update;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\UserController::updateAction',)), array('_route' => 'user_update'));
+            }
+            not_user_update:
+
+            // user_delete
+            if (preg_match('#^/panel/user/(?P<id>[^/]+)/delete$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_user_delete;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\UserController::deleteAction',)), array('_route' => 'user_delete'));
+            }
+            not_user_delete:
+
+        }
+
+        if (0 === strpos($pathinfo, '/panel/team')) {
+            // team
+            if (rtrim($pathinfo, '/') === '/panel/team') {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'team');
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\TeamController::indexAction',  '_route' => 'team',);
+            }
+
+            // team_show
+            if (preg_match('#^/panel/team/(?P<id>[^/]+)/show$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\TeamController::showAction',)), array('_route' => 'team_show'));
+            }
+
+            // team_new
+            if ($pathinfo === '/panel/team/new') {
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\TeamController::newAction',  '_route' => 'team_new',);
+            }
+
+            // team_create
+            if ($pathinfo === '/panel/team/create') {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_team_create;
+                }
+
+                return array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\TeamController::createAction',  '_route' => 'team_create',);
+            }
+            not_team_create:
+
+            // team_edit
+            if (preg_match('#^/panel/team/(?P<id>[^/]+)/edit$#s', $pathinfo, $matches)) {
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\TeamController::editAction',)), array('_route' => 'team_edit'));
+            }
+
+            // team_update
+            if (preg_match('#^/panel/team/(?P<id>[^/]+)/update$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_team_update;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\TeamController::updateAction',)), array('_route' => 'team_update'));
+            }
+            not_team_update:
+
+            // team_delete
+            if (preg_match('#^/panel/team/(?P<id>[^/]+)/delete$#s', $pathinfo, $matches)) {
+                if ($this->context->getMethod() != 'POST') {
+                    $allow[] = 'POST';
+                    goto not_team_delete;
+                }
+
+                return array_merge($this->mergeDefaults($matches, array (  '_controller' => 'ArrasFilmFestival\\BackOfficeBundle\\Controller\\TeamController::deleteAction',)), array('_route' => 'team_delete'));
+            }
+            not_team_delete:
 
         }
 

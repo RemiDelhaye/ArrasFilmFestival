@@ -3,6 +3,7 @@
 namespace ArrasFilmFestival\BackOfficeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Podcast
@@ -48,6 +49,18 @@ class Podcast
      * @ORM\Column(name="path", type="string", length=255)
      */
     private $path;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="podcasts")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
+
+    /**
+     * @Assert\NotNull()
+     * @Assert\File(maxSize="6000000")
+     */
+    public $audio;
 
 
     /**
@@ -150,5 +163,89 @@ class Podcast
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $user
+     * @return Podcast
+     */
+    public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function getAbsolutePath()
+    {
+        return null === $this->path
+            ? null
+            : $this->getUploadRootDir().'/'.$this->path;
+    }
+
+    public function getWebPath()
+    {
+        return null === $this->path
+            ? null
+            : $this->getUploadDir().'/'.$this->path;
+    }
+
+    protected function getUploadRootDir()
+    {
+        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
+
+    protected function getUploadDir()
+    {
+        return 'uploads/photos';
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpload()
+    {
+        if (null !== $this->audio) {
+            $audioname = sha1(uniqid(mt_rand(), true));
+            $this->path = $audioname.'.'.$this->audio->guessExtension();
+        }
+    }
+
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        if (null === $this->audio) {
+            return;
+        }
+
+        $this->audio->move($this->getUploadRootDir(), $this->path);
+
+        unset($this->audio);
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        if ($audio = $this->getAbsolutePath()) {
+            unlink($audio);
+        }
     }
 }

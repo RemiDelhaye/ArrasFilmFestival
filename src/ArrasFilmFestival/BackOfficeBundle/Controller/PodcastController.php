@@ -75,7 +75,6 @@ class PodcastController extends Controller
         $entity  = new Podcast();
         $form = $this->createForm(new PodcastType(), $entity);
         $form->bind($request);
-        
         $entity->setCreated(new \DateTime('now'));
 
         if ($form->isValid()) {

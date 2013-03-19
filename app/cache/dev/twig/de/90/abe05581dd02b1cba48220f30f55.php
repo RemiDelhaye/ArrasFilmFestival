@@ -28,10 +28,11 @@ class __TwigTemplate_de90abe05581dd02b1cba48220f30f55 extends Twig_Template
     public function block_body($context, array $blocks = array())
     {
         // line 4
-        echo "<div class=\"row\">
+        echo "
+<div class=\"row\">
 \t<div class=\"span8 offset2\">
 \t\t<form class=\"form-horizontal\" action=\"";
-        // line 6
+        // line 7
         echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_create"), "html", null, true);
         echo "\" method=\"post\" ";
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), 'enctype');
@@ -40,63 +41,63 @@ class __TwigTemplate_de90abe05581dd02b1cba48220f30f55 extends Twig_Template
 \t\t    \t<legend>Ajouter des photos</legend>
 
 \t\t    \t";
-        // line 10
+        // line 11
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), 'errors');
         echo "
 
 \t\t    \t<div class=\"control-group\">
 \t\t\t    \t";
-        // line 13
+        // line 14
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "image"), 'label', array("label_attr" => array("class" => "control-label")) + (twig_test_empty($_label_ = ((array_key_exists("label", $context)) ? (_twig_default_filter((isset($context["label"]) ? $context["label"] : $this->getContext($context, "label")), null)) : (null))) ? array() : array("label" => $_label_)));
         echo "
 \t\t\t    \t<div class=\"controls\">
 \t\t\t\t    \t";
-        // line 15
+        // line 16
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "image"), 'widget', array("attr" => array("class" => "span4")));
         echo "
 \t\t\t\t    </div>
 \t\t\t\t    ";
-        // line 17
+        // line 18
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "image"), 'errors');
         echo "
 \t\t\t\t</div>
 
 \t\t    \t<div class=\"control-group\">
 \t\t\t    \t";
-        // line 21
+        // line 22
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "title"), 'label', array("label_attr" => array("class" => "control-label")) + (twig_test_empty($_label_ = ((array_key_exists("label", $context)) ? (_twig_default_filter((isset($context["label"]) ? $context["label"] : $this->getContext($context, "label")), null)) : (null))) ? array() : array("label" => $_label_)));
         echo "
 \t\t\t    \t<div class=\"controls\">
 \t\t\t\t    \t";
-        // line 23
+        // line 24
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "title"), 'widget', array("attr" => array("placeholder" => "Titre de la photo", "class" => "span4")));
         echo "
 \t\t\t\t    </div>
 \t\t\t\t    ";
-        // line 25
+        // line 26
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "title"), 'errors');
         echo "
 \t\t\t\t</div>
 
 \t\t    \t<div class=\"control-group\">
 \t\t\t    \t";
-        // line 29
+        // line 30
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "content"), 'label', array("label_attr" => array("class" => "control-label")) + (twig_test_empty($_label_ = ((array_key_exists("label", $context)) ? (_twig_default_filter((isset($context["label"]) ? $context["label"] : $this->getContext($context, "label")), null)) : (null))) ? array() : array("label" => $_label_)));
         echo "
 \t\t\t    \t<div class=\"controls\">
 \t\t\t\t    \t";
-        // line 31
+        // line 32
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "content"), 'widget', array("attr" => array("placeholder" => "Description de la photo", "class" => "span4")));
         echo "
 \t\t\t\t    </div>
 \t\t\t\t    ";
-        // line 33
+        // line 34
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "content"), 'errors');
         echo "
 \t\t\t\t</div>
 
 \t\t\t\t\t";
-        // line 36
+        // line 37
         echo $this->env->getExtension('form')->renderer->searchAndRenderBlock($this->getAttribute((isset($context["form"]) ? $context["form"] : $this->getContext($context, "form")), "_token"), 'widget');
         echo "
 
@@ -108,6 +109,7 @@ class __TwigTemplate_de90abe05581dd02b1cba48220f30f55 extends Twig_Template
 \t\t</form>
 \t</div>
 </div>
+
 ";
     }
 
@@ -123,6 +125,6 @@ class __TwigTemplate_de90abe05581dd02b1cba48220f30f55 extends Twig_Template
 
     public function getDebugInfo()
     {
-        return array (  100 => 36,  94 => 33,  89 => 31,  84 => 29,  77 => 25,  72 => 23,  67 => 21,  60 => 17,  55 => 15,  50 => 13,  44 => 10,  35 => 6,  31 => 4,  28 => 3,);
+        return array (  101 => 37,  95 => 34,  90 => 32,  85 => 30,  78 => 26,  73 => 24,  68 => 22,  61 => 18,  56 => 16,  51 => 14,  45 => 11,  36 => 7,  31 => 4,  28 => 3,);
     }
 }

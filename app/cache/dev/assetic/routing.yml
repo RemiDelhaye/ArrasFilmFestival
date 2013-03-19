@@ -2,4 +2,4 @@ _assetic:
     resource: .
     type: assetic
 _app:
-    resource: 'C:/xampp/htdocs/AFF/app/config/routing_dev.yml'
+    resource: /Users/thomasleduc/Documents/Projets/WEB/Projets/ArrasFilmFestival/app/config/routing_dev.yml

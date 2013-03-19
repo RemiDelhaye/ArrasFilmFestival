@@ -253,11 +253,11 @@ class appDevDebugProjectContainer extends Container
      * This service is shared.
      * This method always returns the same instance of the service.
      *
-     * @return EntityManager514841fec93b8_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager A EntityManager514841fec93b8_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager instance.
+     * @return EntityManager5148602c1703f_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager A EntityManager5148602c1703f_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager instance.
      */
     protected function getDoctrine_Orm_DefaultEntityManagerService()
     {
-        require_once '/Users/thomasleduc/Documents/Projets/WEB/Projets/ArrasFilmFestival/app/cache/dev/jms_diextra/doctrine/EntityManager_514841fec93b8.php';
+        require_once '/Users/thomasleduc/Documents/Projets/WEB/Projets/ArrasFilmFestival/app/cache/dev/jms_diextra/doctrine/EntityManager_5148602c1703f.php';
 
         $a = new \Doctrine\Common\Cache\ArrayCache();
         $a->setNamespace('sf2orm_default_147d54adc5bb4b8958fd8300024000d0');
@@ -287,7 +287,7 @@ class appDevDebugProjectContainer extends Container
         $f = call_user_func(array('Doctrine\\ORM\\EntityManager', 'create'), $this->get('doctrine.dbal.default_connection'), $e);
         $this->get('doctrine.orm.default_manager_configurator')->configure($f);
 
-        return $this->services['doctrine.orm.default_entity_manager'] = new \EntityManager514841fec93b8_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager($f, $this);
+        return $this->services['doctrine.orm.default_entity_manager'] = new \EntityManager5148602c1703f_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager($f, $this);
     }
 
     /**
@@ -2566,7 +2566,7 @@ class appDevDebugProjectContainer extends Container
     /**
      * Gets the doctrine.orm.entity_manager service alias.
      *
-     * @return EntityManager514841fec93b8_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager An instance of the doctrine.orm.default_entity_manager service
+     * @return EntityManager5148602c1703f_546a8d27f194334ee012bfe64f629947b07e4919\__CG__\Doctrine\ORM\EntityManager An instance of the doctrine.orm.default_entity_manager service
      */
     protected function getDoctrine_Orm_EntityManagerService()
     {
@@ -3375,8 +3375,8 @@ class appDevDebugProjectContainer extends Container
             ),
             'jms_di_extra.cache_dir' => '/Users/thomasleduc/Documents/Projets/WEB/Projets/ArrasFilmFestival/app/cache/dev/jms_diextra',
             'jms_di_extra.doctrine_integration' => true,
-            'jms_di_extra.doctrine_integration.entity_manager.file' => '/Users/thomasleduc/Documents/Projets/WEB/Projets/ArrasFilmFestival/app/cache/dev/jms_diextra/doctrine/EntityManager_514841fec93b8.php',
-            'jms_di_extra.doctrine_integration.entity_manager.class' => 'EntityManager514841fec93b8_546a8d27f194334ee012bfe64f629947b07e4919\\__CG__\\Doctrine\\ORM\\EntityManager',
+            'jms_di_extra.doctrine_integration.entity_manager.file' => '/Users/thomasleduc/Documents/Projets/WEB/Projets/ArrasFilmFestival/app/cache/dev/jms_diextra/doctrine/EntityManager_5148602c1703f.php',
+            'jms_di_extra.doctrine_integration.entity_manager.class' => 'EntityManager5148602c1703f_546a8d27f194334ee012bfe64f629947b07e4919\\__CG__\\Doctrine\\ORM\\EntityManager',
             'security.secured_services' => array(
 
             ),

@@ -1,6 +1,7 @@
 {% extends '::template_back.html.twig' %}
 
 {% block body %}
+
 <div class="row">
 	<div class="span8 offset2">
 		<form class="form-horizontal" action="{{ path('podcast_create') }}" method="post" {{ form_enctype(form) }}>
@@ -43,4 +44,5 @@
 		</form>
 	</div>
 </div>
+
 {% endblock %}

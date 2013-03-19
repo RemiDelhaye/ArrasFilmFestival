@@ -59,41 +59,78 @@ class __TwigTemplate_73309b560daca0aef38abccebc71d080 extends Twig_Template
                         <span class=\"icon-bar\"></span>
                         <span class=\"icon-bar\"></span>
                     </button>
-                    <a class=\"brand\" href=\"#\">BackOffice</a>
+                    <a class=\"brand\" href=\"";
+        // line 38
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("back_office_home"), "html", null, true);
+        echo "\">Administration</a>
                     <div class=\"nav-collapse collapse\">
                         <ul class=\"nav\">
-                            <li class=\"active\"><a href=\"";
-        // line 41
-        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("back_office_home"), "html", null, true);
-        echo "\">Acceuil</a></li>
                             <li class=\"dropdown\">
-                                <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Photo <b class=\"caret\"></b></a>
+                                <a href=\"";
+        // line 42
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo"), "html", null, true);
+        echo "\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Articles <b class=\"caret\"></b></a>
                                 <ul class=\"dropdown-menu\">
+                                    <li><a href=\"";
+        // line 44
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo"), "html", null, true);
+        echo "\">Liste</a></li>
                                     <li><a href=\"";
         // line 45
         echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_new"), "html", null, true);
         echo "\">Ajouter</a></li>
-                                    <li><a href=\"";
-        // line 46
-        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo"), "html", null, true);
-        echo "\">Consulter</a></li>
                                 </ul>
                             </li>
                             <li class=\"dropdown\">
-                                <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Podcast <b class=\"caret\"></b></a>
+                                <a href=\"";
+        // line 49
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo"), "html", null, true);
+        echo "\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Photo <b class=\"caret\"></b></a>
                                 <ul class=\"dropdown-menu\">
                                     <li><a href=\"";
+        // line 51
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo"), "html", null, true);
+        echo "\">Liste</a></li>
+                                    <li><a href=\"";
         // line 52
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_new"), "html", null, true);
+        echo "\">Ajouter</a></li>
+                                </ul>
+                            </li>
+                            <li class=\"dropdown\">
+                                <a href=\"";
+        // line 56
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo"), "html", null, true);
+        echo "\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Vidéos <b class=\"caret\"></b></a>
+                                <ul class=\"dropdown-menu\">
+                                    <li><a href=\"";
+        // line 58
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo"), "html", null, true);
+        echo "\">Liste</a></li>
+                                    <li><a href=\"";
+        // line 59
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_new"), "html", null, true);
+        echo "\">Ajouter</a></li>
+                                </ul>
+                            </li>
+                            <li class=\"dropdown\">
+                                <a href=\"";
+        // line 63
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("podcast"), "html", null, true);
+        echo "\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Podcasts <b class=\"caret\"></b></a>
+                                <ul class=\"dropdown-menu\">
+                                    <li><a href=\"";
+        // line 65
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("podcast"), "html", null, true);
+        echo "\">Liste</a></li>
+                                    <li><a href=\"";
+        // line 66
         echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("podcast_new"), "html", null, true);
         echo "\">Ajouter</a></li>
-                                    <li><a href=\"";
-        // line 53
-        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("podcast"), "html", null, true);
-        echo "\">Consulter</a></li>
                                 </ul>
                             </li>
                             <li><a href=\"";
-        // line 56
+        // line 69
         echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("front_office_homepage"), "html", null, true);
         echo "\">Site</a></li>
                         </ul>
@@ -108,20 +145,20 @@ class __TwigTemplate_73309b560daca0aef38abccebc71d080 extends Twig_Template
         <div class=\"container\">
 
         ";
-        // line 68
+        // line 81
         $this->displayBlock('body', $context, $blocks);
-        // line 69
+        // line 82
         echo "
         <hr>
 
         <div>
-            <p>&copy; Thomas Leduc 2013</p>
+            <p>&copy; PôleCom - EPSI Arras - 2013</p>
         </div>
         
         ";
-        // line 76
+        // line 89
         $this->displayBlock('javascripts', $context, $blocks);
-        // line 80
+        // line 93
         echo "        <script src=\"//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js\"></script>
         <script>window.jQuery || document.write('<script src=\"js/vendor/jquery-1.8.3.min.js\"><\\/script>')</script>
         <script src=\"js/plugins.js\"></script>
@@ -155,20 +192,20 @@ class __TwigTemplate_73309b560daca0aef38abccebc71d080 extends Twig_Template
         ";
     }
 
-    // line 68
+    // line 81
     public function block_body($context, array $blocks = array())
     {
     }
 
-    // line 76
+    // line 89
     public function block_javascripts($context, array $blocks = array())
     {
-        // line 77
+        // line 90
         echo "            <script src=\"";
         echo twig_escape_filter($this->env, $this->env->getExtension('assets')->getAssetUrl("bundles/ressources/js/jQuery.js"), "html", null, true);
         echo "\" type=\"text/javascript\"></script>
             <script src=\"";
-        // line 78
+        // line 91
         echo twig_escape_filter($this->env, $this->env->getExtension('assets')->getAssetUrl("bundles/bootstrap/js/bootstrap.min.js"), "html", null, true);
         echo "\" type=\"text/javascript\"></script>
         ";
@@ -186,6 +223,6 @@ class __TwigTemplate_73309b560daca0aef38abccebc71d080 extends Twig_Template
 
     public function getDebugInfo()
     {
-        return array (  172 => 78,  167 => 77,  164 => 76,  159 => 68,  153 => 20,  149 => 19,  144 => 18,  141 => 17,  135 => 9,  125 => 80,  123 => 76,  114 => 69,  112 => 68,  97 => 56,  91 => 53,  87 => 52,  78 => 46,  74 => 45,  67 => 41,  46 => 22,  44 => 17,  33 => 9,  23 => 1,);
+        return array (  209 => 91,  204 => 90,  201 => 89,  196 => 81,  190 => 20,  186 => 19,  181 => 18,  178 => 17,  172 => 9,  162 => 93,  160 => 89,  151 => 82,  149 => 81,  134 => 69,  128 => 66,  124 => 65,  119 => 63,  112 => 59,  108 => 58,  103 => 56,  96 => 52,  92 => 51,  87 => 49,  80 => 45,  76 => 44,  71 => 42,  64 => 38,  46 => 22,  44 => 17,  33 => 9,  23 => 1,);
     }
 }

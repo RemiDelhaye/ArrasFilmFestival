@@ -219,8 +219,8 @@ class Podcast
     public function preUpload()
     {
         if (null !== $this->audio) {
-            $audioname = sha1(uniqid(mt_rand(), true));
-            $this->path = $audioname.'.'.$this->audio->guessExtension();
+            $filename = sha1(uniqid(mt_rand(), true));
+            $this->path = $filename.'.'.$this->audio->guessExtension();
         }
     }
 

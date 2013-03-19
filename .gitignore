@@ -1,3 +1,12 @@
+app/config/parameters.ini
+web/bundles/
+app/bootstrap.php.cache
+app/cache/*
+app/logs/*
+build/
+vendor
+composer.phar
+
 app/cache
 
 #################

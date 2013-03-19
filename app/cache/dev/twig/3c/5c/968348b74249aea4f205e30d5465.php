@@ -69,6 +69,24 @@ class __TwigTemplate_3c5c968348b74249aea4f205e30d5465 extends Twig_Template
     </li>
 </ul>
 
+<div class=\"row\">
+    <section class=\"span4\">aze</section>
+    <section class=\"span4\">aze</section>
+    <section class=\"span4\">aze</section>
+</div>
+
+<div class=\"row\">
+    <section class=\"span4\">qsd</section>
+    <section class=\"span4\">qsd</section>
+    <section class=\"span4\">qsd</section>
+</div>
+
+<div class=\"row\">
+    <section class=\"span4\">wxc</section>
+    <section class=\"span4\">wxc</section>
+    <section class=\"span4\">wxc</section>
+</div>
+
 ";
     }
 

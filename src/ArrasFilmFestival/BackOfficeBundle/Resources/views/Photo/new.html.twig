@@ -10,6 +10,14 @@
 		    	{{ form_errors(form) }}
 
 		    	<div class="control-group">
+			    	{{ form_label(form.image, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+			    	<div class="controls">
+				    	{{ form_widget(form.image, { 'attr': { 'class': 'span4' } }) }}
+				    </div>
+				    {{ form_errors(form.image) }}
+				</div>
+
+		    	<div class="control-group">
 			    	{{ form_label(form.title, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
 			    	<div class="controls">
 				    	{{ form_widget(form.title, { 'attr': { 'placeholder': 'Titre de la photo', 'class': 'span4' } }) }}
@@ -23,14 +31,6 @@
 				    	{{ form_widget(form.content, { 'attr': { 'placeholder': 'Description de la photo', 'class': 'span4' } }) }}
 				    </div>
 				    {{ form_errors(form.content) }}
-				</div>
-
-				<div class="control-group">
-			    	{{ form_label(form.file, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
-			    	<div class="controls">
-				    	{{ form_widget(form.file, { 'attr': { 'class': 'span4' } }) }}
-				    </div>
-				    {{ form_errors(form.file) }}
 				</div>
 
 					{{ form_widget(form._token) }}

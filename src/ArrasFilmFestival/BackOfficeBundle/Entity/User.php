@@ -61,6 +61,11 @@ class User
     private $photos;
 
     /**
+     * @ORM\OneToMany(targetEntity="Podcast", mappedBy="user")
+     */
+    private $podcasts;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -256,5 +261,38 @@ class User
     public function getPhotos()
     {
         return $this->photos;
+    }
+
+    /**
+     * Add podcasts
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcasts
+     * @return User
+     */
+    public function addPodcast(\ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcasts)
+    {
+        $this->podcasts[] = $podcasts;
+    
+        return $this;
+    }
+
+    /**
+     * Remove podcasts
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcasts
+     */
+    public function removePodcast(\ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcasts)
+    {
+        $this->podcasts->removeElement($podcasts);
+    }
+
+    /**
+     * Get podcasts
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPodcasts()
+    {
+        return $this->podcasts;
     }
 }

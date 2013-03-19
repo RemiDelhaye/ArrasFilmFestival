@@ -15,6 +15,7 @@ class PodcastType extends AbstractType
             ->add('content')
             ->add('created')
             ->add('path')
+            ->add('audio')
         ;
     }
 

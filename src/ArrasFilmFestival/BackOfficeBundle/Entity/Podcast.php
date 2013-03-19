@@ -3,6 +3,7 @@
 namespace ArrasFilmFestival\BackOfficeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Podcast
@@ -48,6 +49,18 @@ class Podcast
      * @ORM\Column(name="path", type="string", length=255)
      */
     private $path;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="podcasts")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
+
+    /**
+     * @Assert\NotNull()
+     * @Assert\File(maxSize="6000000")
+     */
+    public $audio;
 
 
     /**
@@ -150,5 +163,28 @@ class Podcast
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $user
+     * @return Podcast
+     */
+    public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

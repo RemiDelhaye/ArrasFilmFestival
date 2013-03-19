@@ -61,7 +61,7 @@ class Photo
      * @Assert\NotNull()
      * @Assert\Image(maxSize="6000000")
      */
-    public $file;
+    public $image;
 
     /**
      * Get id

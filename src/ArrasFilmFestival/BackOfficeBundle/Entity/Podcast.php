@@ -58,7 +58,7 @@ class Podcast
 
     /**
      * @Assert\NotNull()
-     * @Assert\File(maxSize="6000000")
+     * @Assert\File(maxSize="600000000000000000")
      */
     public $audio;
 
@@ -188,7 +188,7 @@ class Podcast
         return $this->user;
     }
 
-    public function getAbsolutePath()
+  public function getAbsolutePath()
     {
         return null === $this->path
             ? null
@@ -219,8 +219,8 @@ class Podcast
     public function preUpload()
     {
         if (null !== $this->audio) {
-            $filename = sha1(uniqid(mt_rand(), true));
-            $this->path = $filename.'.'.$this->audio->guessExtension();
+            $audioname = sha1(uniqid(mt_rand(), true));
+            $this->path = $audioname.'.'.$this->audio->guessExtension();
         }
     }
 

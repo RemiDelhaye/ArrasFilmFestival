@@ -2,20 +2,25 @@
 
 {% block body %}
 
+{%- if form_errors(form.image) != null -%}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Attention !</strong> {{ form_errors(form.image) }}
+</div>
+{%- endif -%}
+
+
 <div class="row">
 	<div class="span8 offset2">
 		<form class="form-horizontal" action="{{ path('photo_create') }}" method="post" {{ form_enctype(form) }}>
 		    <fieldset>
-		    	<legend>Ajouter des photos</legend>
-
-		    	{{ form_errors(form) }}
+		    	<legend>Ajouter une photo</legend>
 
 		    	<div class="control-group">
 			    	{{ form_label(form.image, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
 			    	<div class="controls">
 				    	{{ form_widget(form.image, { 'attr': { 'class': 'span4' } }) }}
 				    </div>
-				    {{ form_errors(form.image) }}
 				</div>
 
 		    	<div class="control-group">
@@ -23,7 +28,6 @@
 			    	<div class="controls">
 				    	{{ form_widget(form.title, { 'attr': { 'placeholder': 'Titre de la photo', 'class': 'span4' } }) }}
 				    </div>
-				    {{ form_errors(form.title) }}
 				</div>
 
 		    	<div class="control-group">
@@ -31,14 +35,13 @@
 			    	<div class="controls">
 				    	{{ form_widget(form.content, { 'attr': { 'placeholder': 'Description de la photo', 'class': 'span4' } }) }}
 				    </div>
-				    {{ form_errors(form.content) }}
 				</div>
 
 					{{ form_widget(form._token) }}
 
 				<div class="form-actions">
-				  	<input type="submit" class="btn btn-primary" />
-			    	<input type="reset" class="btn" />
+				  	<button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Ajouter la photo</button>
+                    <button type="reset" class="btn"><i class="icon-refresh"></i> Vider</button>
 				</div>
 			</fieldset>
 		</form>

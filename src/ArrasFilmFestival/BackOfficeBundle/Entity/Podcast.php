@@ -52,17 +52,30 @@ class Podcast
     private $path;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="photos")
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated", type="datetime")
+     */    
+    private $updated;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="Podcasts")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
-     * @Assert\NotNull()
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="videos_update")
+     * @ORM\JoinColumn(name="user_update_id", referencedColumnName="id")
+     */
+    private $user_update;
+
+    /**
      * @Assert\File(
-     *     maxSize = "10000k",
+     *     maxSize = "30720k",
+     *     maxSizeMessage = "Le fichier ne doit pas dépasser 30Mo, veuillez en choisir un autre.",
      *     mimeTypes = {"audio/mpeg"},
-     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format MP3."
+     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format mp3."
      * )
      */
     public $audio;
@@ -81,7 +94,7 @@ class Podcast
      * Set title
      *
      * @param string $title
-     * @return Photo
+     * @return Podcast
      */
     public function setTitle($title)
     {
@@ -104,7 +117,7 @@ class Podcast
      * Set content
      *
      * @param string $content
-     * @return Photo
+     * @return Podcast
      */
     public function setContent($content)
     {
@@ -127,7 +140,7 @@ class Podcast
      * Set created
      *
      * @param \DateTime $created
-     * @return Photo
+     * @return Podcast
      */
     public function setCreated($created)
     {
@@ -150,7 +163,7 @@ class Podcast
      * Set path
      *
      * @param string $path
-     * @return Photo
+     * @return Podcast
      */
     public function setPath($path)
     {
@@ -173,7 +186,7 @@ class Podcast
      * Set user
      *
      * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $user
-     * @return Photo
+     * @return Podcast
      */
     public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = null)
     {
@@ -190,6 +203,30 @@ class Podcast
     public function getUser()
     {
         return $this->user;
+    }
+
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Podcast
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+    
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
     }
 
     public function getAbsolutePath()
@@ -251,5 +288,28 @@ class Podcast
         if ($audio = $this->getAbsolutePath()) {
             unlink($audio);
         }
+    }
+
+    /**
+     * Set user_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate
+     * @return Podcast
+     */
+    public function setUserUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate = null)
+    {
+        $this->user_update = $userUpdate;
+    
+        return $this;
+    }
+
+    /**
+     * Get user_update
+     *
+     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
+     */
+    public function getUserUpdate()
+    {
+        return $this->user_update;
     }
 }

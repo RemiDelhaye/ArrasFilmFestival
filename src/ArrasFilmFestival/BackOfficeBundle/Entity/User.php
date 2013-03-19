@@ -61,9 +61,29 @@ class User
     private $photos;
 
     /**
+     * @ORM\OneToMany(targetEntity="Photo", mappedBy="user_update")
+     */
+    private $photos_update;
+
+    /**
      * @ORM\OneToMany(targetEntity="Podcast", mappedBy="user")
      */
     private $podcasts;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Podcast", mappedBy="user_update")
+     */
+    private $podcasts_update;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Video", mappedBy="user")
+     */
+    private $videos;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Video", mappedBy="user_update")
+     */
+    private $videos_update;
 
     /**
      * Get id
@@ -294,5 +314,137 @@ class User
     public function getPodcasts()
     {
         return $this->podcasts;
+    }
+
+    /**
+     * Add photos_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photosUpdate
+     * @return User
+     */
+    public function addPhotosUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photosUpdate)
+    {
+        $this->photos_update[] = $photosUpdate;
+    
+        return $this;
+    }
+
+    /**
+     * Remove photos_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photosUpdate
+     */
+    public function removePhotosUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photosUpdate)
+    {
+        $this->photos_update->removeElement($photosUpdate);
+    }
+
+    /**
+     * Get photos_update
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPhotosUpdate()
+    {
+        return $this->photos_update;
+    }
+
+    /**
+     * Add podcasts_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcastsUpdate
+     * @return User
+     */
+    public function addPodcastsUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcastsUpdate)
+    {
+        $this->podcasts_update[] = $podcastsUpdate;
+    
+        return $this;
+    }
+
+    /**
+     * Remove podcasts_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcastsUpdate
+     */
+    public function removePodcastsUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcastsUpdate)
+    {
+        $this->podcasts_update->removeElement($podcastsUpdate);
+    }
+
+    /**
+     * Get podcasts_update
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPodcastsUpdate()
+    {
+        return $this->podcasts_update;
+    }
+
+    /**
+     * Add videos
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Video $videos
+     * @return User
+     */
+    public function addVideo(\ArrasFilmFestival\BackOfficeBundle\Entity\Video $videos)
+    {
+        $this->videos[] = $videos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove videos
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Video $videos
+     */
+    public function removeVideo(\ArrasFilmFestival\BackOfficeBundle\Entity\Video $videos)
+    {
+        $this->videos->removeElement($videos);
+    }
+
+    /**
+     * Get videos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getVideos()
+    {
+        return $this->videos;
+    }
+
+    /**
+     * Add videos_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Video $videosUpdate
+     * @return User
+     */
+    public function addVideosUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Video $videosUpdate)
+    {
+        $this->videos_update[] = $videosUpdate;
+    
+        return $this;
+    }
+
+    /**
+     * Remove videos_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Video $videosUpdate
+     */
+    public function removeVideosUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Video $videosUpdate)
+    {
+        $this->videos_update->removeElement($videosUpdate);
+    }
+
+    /**
+     * Get videos_update
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getVideosUpdate()
+    {
+        return $this->videos_update;
     }
 }

@@ -2,7 +2,12 @@
 
 {% block body %}
 
-<h1>Modification</h1>
+{%- if form_errors(edit_form.image) != null -%}
+<div class="alert alert-error">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Attention !</strong> {{ form_errors(edit_form.image) }}
+</div>
+{%- endif -%}
 
 <div class="row">
     <div class="span8 offset2">
@@ -10,16 +15,15 @@
             <fieldset>
                 <legend>Modifier la photo</legend>
 
-                <img src="{{ asset('uploads/photos/') }}{{entity.path}}" alt="{{ entity.title }}" class="img-polaroid span4 offset2">
-
-                {{ form_errors(edit_form) }}
+                <div class="control-group">
+                    <img src="{{ asset('uploads/photos/') }}{{entity.path}}" alt="{{ entity.title }}" class="img-polaroid span4 offset2">
+                </div>
 
                 <div class="control-group">
                     {{ form_label(edit_form.image, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
                     <div class="controls">
                         {{ form_widget(edit_form.image, { 'attr': { 'class': 'span4' } }) }}
                     </div>
-                    {{ form_errors(edit_form.image) }}
                 </div>
 
                 <div class="control-group">
@@ -27,7 +31,6 @@
                     <div class="controls">
                         {{ form_widget(edit_form.title, { 'attr': { 'placeholder': 'Titre de la photo', 'class': 'span4' } }) }}
                     </div>
-                    {{ form_errors(edit_form.title) }}
                 </div>
 
                 <div class="control-group">
@@ -35,35 +38,15 @@
                     <div class="controls">
                         {{ form_widget(edit_form.content, { 'attr': { 'placeholder': 'Description de la photo', 'class': 'span4' } }) }}
                     </div>
-                    {{ form_errors(edit_form.content) }}
                 </div>
 
                     {{ form_widget(edit_form._token) }}
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Modifier</button>
-                    <button type="reset" class="btn"><i class="icon-refresh"></i> Vider</button>
-                    <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>
+                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Valider les modifications</button>
+                    <button type="reset" class="btn"><i class="icon-refresh"></i> Réinitialiser</button>
                 </div>
             </fieldset>
-        </form>
-    </div>
-</div>
-
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Supprimer la photo</h3>
-    </div>
-    <div class="modal-body">
-        <p>Voulez-vous vraiment supprimer cette photo ?</p>
-        <p><i class="icon-warning-sign"></i> Attention, ceci est irréversible !</p>
-    </div>
-    <div class="modal-footer">
-        <form action="{{ path('photo_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
-            <button type="submit" class="btn btn-danger">Supprimer</button>
         </form>
     </div>
 </div>

@@ -3,12 +3,14 @@
 namespace ArrasFilmFestival\BackOfficeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Video
  *
  * @ORM\Table()
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Video
 {
@@ -29,13 +31,6 @@ class Video
     private $title;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="content", type="text")
-     */
-    private $content;
-
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime")
@@ -48,6 +43,35 @@ class Video
      * @ORM\Column(name="path", type="string", length=255)
      */
     private $path;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated", type="datetime")
+     */    
+    private $updated;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="videos")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="videos_update")
+     * @ORM\JoinColumn(name="user_update_id", referencedColumnName="id")
+     */
+    private $user_update;
+
+    /**
+     * @Assert\File(
+     *     maxSize = "55000k",
+     *     maxSizeMessage = "Les fichiers ne doivent pas dépasser 55 Mo.",  
+     *     mimeTypes = {"video/avi", "video/flv"},
+     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format avi ou flv."
+     * )
+     */
+    public $video;
 
     /**
      * Get id
@@ -83,29 +107,6 @@ class Video
     }
 
     /**
-     * Set content
-     *
-     * @param string $content
-     * @return Video
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-    
-        return $this;
-    }
-
-    /**
-     * Get content
-     *
-     * @return string 
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
      * Set created
      *
      * @param \DateTime $created
@@ -132,7 +133,7 @@ class Video
      * Set path
      *
      * @param string $path
-     * @return Video
+     * @return Photo
      */
     public function setPath($path)
     {
@@ -149,5 +150,135 @@ class Video
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $user
+     * @return Photo
+     */
+    public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Video
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+    
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * Set user_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate
+     * @return Video
+     */
+    public function setUserUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate = null)
+    {
+        $this->user_update = $userUpdate;
+    
+        return $this;
+    }
+
+    /**
+     * Get user_update
+     *
+     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
+     */
+    public function getUserUpdate()
+    {
+        return $this->user_update;
+    }
+
+    public function getAbsolutePath()
+    {
+        return null === $this->path
+            ? null
+            : $this->getUploadRootDir().'/'.$this->path;
+    }
+
+    public function getWebPath()
+    {
+        return null === $this->path
+            ? null
+            : $this->getUploadDir().'/'.$this->path;
+    }
+
+    protected function getUploadRootDir()
+    {
+        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
+
+    protected function getUploadDir()
+    {
+        return 'uploads/videos';
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpload()
+    {
+        if (null !== $this->video) {
+            $videoname = sha1(uniqid(mt_rand(), true));
+            $this->path = $videoname.'.'.$this->video->guessExtension();
+        }
+    }
+
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        if (null === $this->video) {
+            return;
+        }
+
+        $this->video->move($this->getUploadRootDir(), $this->path);
+
+        unset($this->video);
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        if ($video = $this->getAbsolutePath()) {
+            unlink($video);
+        }
     }
 }

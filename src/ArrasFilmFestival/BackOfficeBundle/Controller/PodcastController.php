@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use ArrasFilmFestival\BackOfficeBundle\Entity\Podcast;
-use ArrasFilmFestival\BackOfficeBundle\Form\PodcastType;
 
 /**
  * Podcast controller.
@@ -21,33 +20,17 @@ class PodcastController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $deleteForm = null;
 
         $entities = $em->getRepository('BackOfficeBundle:Podcast')->findAll();
 
-        return $this->render('BackOfficeBundle:Podcast:index.html.twig', array(
-            'entities' => $entities,
-        ));
-    }
-
-    /**
-     * Finds and displays a Podcast entity.
-     *
-     */
-    public function showAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('BackOfficeBundle:Podcast')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Podcast entity.');
+        foreach($entities as $entity){
+            $deleteForm[] = $this->createDeleteForm($entity->getId())->createView();
         }
-
-        $deleteForm = $this->createDeleteForm($id);
-
-        return $this->render('BackOfficeBundle:Podcast:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),        
+        
+        return $this->render('BackOfficeBundle:Podcast:index.html.twig', array(
+            'entities'      => $entities,
+            'delete_forms'  => $deleteForm,
         ));
     }
 
@@ -58,7 +41,7 @@ class PodcastController extends Controller
     public function newAction()
     {
         $entity = new Podcast();
-        $form   = $this->createForm(new PodcastType(), $entity);
+        $form   = $this->createFormEntity($entity);
 
         return $this->render('BackOfficeBundle:Podcast:new.html.twig', array(
             'entity' => $entity,
@@ -73,16 +56,17 @@ class PodcastController extends Controller
     public function createAction(Request $request)
     {
         $entity  = new Podcast();
-        $form = $this->createForm(new PodcastType(), $entity);
+        $form = $this->createFormEntity($entity);
         $form->bind($request);
         $entity->setCreated(new \DateTime('now'));
+        $entity->setUpdated(new \DateTime('now'));
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('podcast_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('podcast'));
         }
 
         return $this->render('BackOfficeBundle:Podcast:new.html.twig', array(
@@ -102,16 +86,14 @@ class PodcastController extends Controller
         $entity = $em->getRepository('BackOfficeBundle:Podcast')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Podcast entity.');
+            throw $this->createNotFoundException("La Podcast désirée n'existe pas.");
         }
 
-        $editForm = $this->createForm(new PodcastType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
+        $editForm = $this->createFormEntity($entity, false);
 
         return $this->render('BackOfficeBundle:Podcast:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -126,24 +108,24 @@ class PodcastController extends Controller
         $entity = $em->getRepository('BackOfficeBundle:Podcast')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Podcast entity.');
+            throw $this->createNotFoundException("La Podcast désirée n'existe pas.");
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createForm(new PodcastType(), $entity);
+        $editForm = $this->createFormEntity($entity, false);
         $editForm->bind($request);
+
+        $entity->setUpdated(new \DateTime('now'));
 
         if ($editForm->isValid()) {
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('podcast_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('podcast', array('id' => $id)));
         }
 
         return $this->render('BackOfficeBundle:Podcast:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -161,7 +143,7 @@ class PodcastController extends Controller
             $entity = $em->getRepository('BackOfficeBundle:Podcast')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Podcast entity.');
+                throw $this->createNotFoundException("La Podcast désirée n'existe pas.");
             }
 
             $em->remove($entity);
@@ -176,6 +158,16 @@ class PodcastController extends Controller
         return $this->createFormBuilder(array('id' => $id))
             ->add('id', 'hidden')
             ->getForm()
+        ;
+    }
+
+    private function createFormEntity($entity, $validate = true)
+    {  
+        return $form = $this->createFormBuilder($entity)
+                ->add('title', null, array('label' => 'Titre'))
+                ->add('content', null, array('label' => 'Description'))
+                ->add('audio', null, array('label' => 'Podcast', 'required' => $validate))
+                ->getForm()
         ;
     }
 }

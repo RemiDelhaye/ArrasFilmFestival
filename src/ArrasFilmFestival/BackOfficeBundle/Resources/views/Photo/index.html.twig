@@ -2,39 +2,76 @@
 
 {% block body %}
 
-{% set compte = 1 %}
+{% set count = 0 %}
+{% set iterator = 0 %}
 
 <h1>Photos</h1>
 
-<a href="{{ path('photo_new') }}" class="btn btn-block btn-large">
-    <i class="icon-plus"></i> Ajouter une photo
-</a>
+<p>
+    <a href="{{ path('photo_new') }}" class="btn btn-large btn-block btn-primary">
+        <i class="icon-plus icon-white"></i> Ajouter une photo
+    </a>
+</p>
 
-<section class="thumbnails section-photo">
+<ul class="thumbnails">
 
-    {% for entity in entities %}
+{% for entity in entities %}
+     
 
-    {%- if compte == 4 -%}
-    {% set compte = 1 %}
+    {%- if count == 3 -%}
+        
+        {% set count = 0 %}
 
-</section>
-<section class="thumbnails section-photo">
+</ul>
+<ul class="thumbnails">
+
     {%- endif -%}
 
-    {% set compte = compte+1 %}
+    {% set count = count + 1 %}
 
-    <article class="span4">
-        <div class="thumbnail article-photo">
-            <h4>{{ entity.title }}</h4>
-            <img src="{{ asset('uploads/photos/') }}{{entity.path}}" alt="{{ entity.title }}" />
-            <p>{{ entity.content }}</p>
-            <p><small><em>{{ entity.created|date('d/m/Y à H:i:s') }}</em></small></p>  
-            <a href="{{ path('photo_edit', { 'id': entity.id }) }}" class="btn btn-block" ><i class="icon-edit"></i> Modifier</a>
+    <li class="span4">
+        <div class="thumbnail">
+            <div class="caption">
+                <h5>{{ entity.title }}</h5>
+            </div>
+            <img src="{{ asset('uploads/photos/') }}{{entity.path}}" alt="{{ entity.title }}" width="300" height="200" />
+            <div class="caption">
+                <p>{{ entity.content }}</p>
+                <p><small><em>{{ entity.created|date('d/m à H:i') }}</em></small></p>  
+                <p class="text-center">
+                    <a href="{{ path('photo_edit', { 'id': entity.id }) }}" class="btn" ><i class="icon-edit"></i> Modifier</a>
+                    <a href="#myModal{{ entity.id }}" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>
+                </p>
+            </div>
         </div>  
-    </article>
+    </li>
 
-    {% endfor %}
+    <div id="myModal{{ entity.id }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Supprimer la photo</h3>
+        </div>
+        <div class="modal-body">
+            <p>Voulez-vous vraiment supprimer cette photo ?</p>
+            <p><i class="icon-warning-sign"></i> Attention, ceci est irréversible !</p>
+        </div>
+        <div class="modal-footer">
+            <form action="{{ path('photo_delete', { 'id': entity.id }) }}" method="post">
+                {{ form_widget(attribute(delete_forms, iterator)) }}
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
 
-</section>
+{% set iterator = iterator + 1 %}
+
+{% else %}
+
+    <h2 class="text-center">Aucunes photos n'ont été publiées pour le moment.</h2>
+
+{% endfor %}
+
+</ul>
 
 {% endblock %}

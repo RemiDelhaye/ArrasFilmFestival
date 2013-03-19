@@ -52,14 +52,31 @@ class Photo
     private $path;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated", type="datetime")
+     */    
+    private $updated;
+
+    /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="photos")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
-     * @Assert\NotNull()
-     * @Assert\Image(maxSize="6000000")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="photos_update")
+     * @ORM\JoinColumn(name="user_update_id", referencedColumnName="id")
+     */
+    private $user_update;
+
+    /**
+     * @Assert\File(
+     *     maxSize = "2048k",
+     *     maxSizeMessage = "Les fichiers ne doivent pas dépasser 2 Mo.",  
+     *     mimeTypes = {"image/png", "image/jpeg"},
+     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format png ou jpeg."
+     * )
      */
     public $image;
 
@@ -186,6 +203,52 @@ class Photo
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Photo
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+    
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * Set user_update
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate
+     * @return Photo
+     */
+    public function setUserUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate = null)
+    {
+        $this->user_update = $userUpdate;
+    
+        return $this;
+    }
+
+    /**
+     * Get user_update
+     *
+     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
+     */
+    public function getUserUpdate()
+    {
+        return $this->user_update;
     }
 
     public function getAbsolutePath()

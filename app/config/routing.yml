@@ -6,11 +6,22 @@ BackOfficeBundle_photo:
     resource: "@BackOfficeBundle/Resources/config/routing/photo.yml"
     prefix:   /panel/photo
 
-# Internal routing configuration to handle ESI
-# ****** WARNING ******
-# This route should be enabled with caution as it can open a security vulnerability
-# see http://symfony.com/blog/security-release-symfony-2-0-20-and-2-1-5-released for more information
-# ****** WARNING ******
-#_internal:
-#    resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
-#    prefix:   /_internal
+BackOfficeBundle_video:
+    resource: "@BackOfficeBundle/Resources/config/routing/video.yml"
+    prefix:   /panel/video
+
+BackOfficeBundle_podcast:
+    resource: "@BackOfficeBundle/Resources/config/routing/podcast.yml"
+    prefix:   /panel/podcast
+
+BackOfficeBundle_article:
+    resource: "@BackOfficeBundle/Resources/config/routing/article.yml"
+    prefix:   /panel/article
+
+BackOfficeBundle_user:
+    resource: "@BackOfficeBundle/Resources/config/routing/user.yml"
+    prefix:   /panel/user
+
+BackOfficeBundle_team:
+    resource: "@BackOfficeBundle/Resources/config/routing/team.yml"
+    prefix:   /panel/team

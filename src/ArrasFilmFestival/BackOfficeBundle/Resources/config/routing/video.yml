@@ -1,0 +1,30 @@
+video:
+    pattern:  /
+    defaults: { _controller: "BackOfficeBundle:Video:index" }
+
+video_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "BackOfficeBundle:Video:show" }
+
+video_new:
+    pattern:  /new
+    defaults: { _controller: "BackOfficeBundle:Video:new" }
+
+video_create:
+    pattern:  /create
+    defaults: { _controller: "BackOfficeBundle:Video:create" }
+    requirements: { _method: post }
+
+video_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "BackOfficeBundle:Video:edit" }
+
+video_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "BackOfficeBundle:Video:update" }
+    requirements: { _method: post }
+
+video_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "BackOfficeBundle:Video:delete" }
+    requirements: { _method: post }

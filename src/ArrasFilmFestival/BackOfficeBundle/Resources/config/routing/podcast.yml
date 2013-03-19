@@ -1,0 +1,30 @@
+podcast:
+    pattern:  /
+    defaults: { _controller: "BackOfficeBundle:Podcast:index" }
+
+podcast_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "BackOfficeBundle:Podcast:show" }
+
+podcast_new:
+    pattern:  /new
+    defaults: { _controller: "BackOfficeBundle:Podcast:new" }
+
+podcast_create:
+    pattern:  /create
+    defaults: { _controller: "BackOfficeBundle:Podcast:create" }
+    requirements: { _method: post }
+
+podcast_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "BackOfficeBundle:Podcast:edit" }
+
+podcast_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "BackOfficeBundle:Podcast:update" }
+    requirements: { _method: post }
+
+podcast_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "BackOfficeBundle:Podcast:delete" }
+    requirements: { _method: post }

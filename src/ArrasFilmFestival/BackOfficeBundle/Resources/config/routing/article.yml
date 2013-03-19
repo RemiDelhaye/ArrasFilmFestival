@@ -1,0 +1,30 @@
+article:
+    pattern:  /
+    defaults: { _controller: "BackOfficeBundle:Article:index" }
+
+article_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "BackOfficeBundle:Article:show" }
+
+article_new:
+    pattern:  /new
+    defaults: { _controller: "BackOfficeBundle:Article:new" }
+
+article_create:
+    pattern:  /create
+    defaults: { _controller: "BackOfficeBundle:Article:create" }
+    requirements: { _method: post }
+
+article_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "BackOfficeBundle:Article:edit" }
+
+article_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "BackOfficeBundle:Article:update" }
+    requirements: { _method: post }
+
+article_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "BackOfficeBundle:Article:delete" }
+    requirements: { _method: post }

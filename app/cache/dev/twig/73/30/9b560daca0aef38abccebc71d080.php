@@ -51,21 +51,58 @@ class __TwigTemplate_73309b560daca0aef38abccebc71d080 extends Twig_Template
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <header>
-        </header>
-        <div id=\"container\">
+        <div class=\"navbar navbar-inverse navbar-fixed-top\">
+            <div class=\"navbar-inner\">
+                <div class=\"container\">
+                    <button type=\"button\" class=\"btn btn-navbar\" data-toggle=\"collapse\" data-target=\".nav-collapse\">
+                        <span class=\"icon-bar\"></span>
+                        <span class=\"icon-bar\"></span>
+                        <span class=\"icon-bar\"></span>
+                    </button>
+                    <a class=\"brand\" href=\"#\">BackOffice</a>
+                    <div class=\"nav-collapse collapse\">
+                        <ul class=\"nav\">
+                            <li class=\"active\"><a href=\"";
+        // line 41
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("back_office_home"), "html", null, true);
+        echo "\">Acceuil</a></li>
+                            <li class=\"dropdown\">
+                                <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Photo <b class=\"caret\"></b></a>
+                                <ul class=\"dropdown-menu\">
+                                    <li><a href=\"";
+        // line 45
+        echo twig_escape_filter($this->env, $this->env->getExtension('routing')->getPath("photo_new"), "html", null, true);
+        echo "\">Ajouter</a></li>
+                                </ul>
+                            </li>
+                            
+                            <li><a href=\"#\">Site</a></li>
+                        </ul>
+                        <p class=\"navbar-text pull-right\">
+                            @ PôleCom
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class=\"container\">
 
         ";
-        // line 34
+        // line 61
         $this->displayBlock('body', $context, $blocks);
-        // line 35
+        // line 62
         echo "
+        <hr>
+
+        <div>
+            <p>&copy; Thomas Leduc 2013</p>
         </div>
         
         ";
-        // line 38
+        // line 69
         $this->displayBlock('javascripts', $context, $blocks);
-        // line 39
+        // line 73
         echo "        <script src=\"//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js\"></script>
         <script>window.jQuery || document.write('<script src=\"js/vendor/jquery-1.8.3.min.js\"><\\/script>')</script>
         <script src=\"js/plugins.js\"></script>
@@ -99,14 +136,23 @@ class __TwigTemplate_73309b560daca0aef38abccebc71d080 extends Twig_Template
         ";
     }
 
-    // line 34
+    // line 61
     public function block_body($context, array $blocks = array())
     {
     }
 
-    // line 38
+    // line 69
     public function block_javascripts($context, array $blocks = array())
     {
+        // line 70
+        echo "            <script src=\"";
+        echo twig_escape_filter($this->env, $this->env->getExtension('assets')->getAssetUrl("bundles/ressources/js/jQuery.js"), "html", null, true);
+        echo "\" type=\"text/javascript\"></script>
+            <script src=\"";
+        // line 71
+        echo twig_escape_filter($this->env, $this->env->getExtension('assets')->getAssetUrl("bundles/bootstrap/js/bootstrap.min.js"), "html", null, true);
+        echo "\" type=\"text/javascript\"></script>
+        ";
     }
 
     public function getTemplateName()
@@ -114,8 +160,13 @@ class __TwigTemplate_73309b560daca0aef38abccebc71d080 extends Twig_Template
         return "::template_back.html.twig";
     }
 
+    public function isTraitable()
+    {
+        return false;
+    }
+
     public function getDebugInfo()
     {
-        return array (  108 => 38,  103 => 34,  97 => 20,  93 => 19,  88 => 18,  85 => 17,  79 => 9,  69 => 39,  60 => 34,  46 => 22,  44 => 17,  33 => 9,  23 => 1,  72 => 23,  67 => 38,  62 => 35,  55 => 15,  50 => 13,  45 => 11,  35 => 6,  31 => 4,  28 => 3,);
+        return array (  153 => 71,  148 => 70,  145 => 69,  140 => 61,  134 => 20,  130 => 19,  125 => 18,  122 => 17,  116 => 9,  106 => 73,  104 => 69,  95 => 62,  93 => 61,  74 => 45,  67 => 41,  46 => 22,  44 => 17,  33 => 9,  23 => 1,);
     }
 }

@@ -1,4 +1,7 @@
 app/cache/*
+web/uploads/videos/*
+web/uploads/photos/*
+web/uploads/podcasts/*
 
 #
 # Symfony 2 related

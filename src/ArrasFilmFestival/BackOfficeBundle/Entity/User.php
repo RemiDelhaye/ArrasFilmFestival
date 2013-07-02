@@ -2,15 +2,16 @@
 
 namespace ArrasFilmFestival\BackOfficeBundle\Entity;
 
+use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * User
  *
- * @ORM\Table()
+ * @ORM\Table(name="fos_user")
  * @ORM\Entity
  */
-class User
+class User extends BaseUser
 {
     /**
      * @var integer
@@ -19,71 +20,64 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="login", type="string", length=255)
      */
-    private $login;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=255)
-     */
-    private $password;
+    protected $login;
 
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
      *
      * @ORM\Column(name="surname", type="string", length=255)
      */
-    private $surname;
+    protected $surname;
 
     /**
      * @ORM\ManyToOne(targetEntity="Team", inversedBy="users")
      * @ORM\JoinColumn(name="team_id", referencedColumnName="id")
      */
-    private $team;
+    protected $team;
 
     /**
      * @ORM\OneToMany(targetEntity="Photo", mappedBy="user")
      */
-    private $photos;
+    protected $photos;
 
     /**
      * @ORM\OneToMany(targetEntity="Photo", mappedBy="user_update")
      */
-    private $photos_update;
+    protected $photos_update;
 
     /**
      * @ORM\OneToMany(targetEntity="Podcast", mappedBy="user")
      */
-    private $podcasts;
+    protected $podcasts;
 
     /**
      * @ORM\OneToMany(targetEntity="Podcast", mappedBy="user_update")
      */
-    private $podcasts_update;
+    protected $podcasts_update;
 
     /**
      * @ORM\OneToMany(targetEntity="Video", mappedBy="user")
      */
-    private $videos;
+    protected $videos;
 
     /**
      * @ORM\OneToMany(targetEntity="Video", mappedBy="user_update")
      */
-    private $videos_update;
+    protected $videos_update;
 
     /**
      * Get id

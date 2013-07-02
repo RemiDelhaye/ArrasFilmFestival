@@ -4,28 +4,51 @@ front_office:
 
 back_office:
     resource: "@BackOfficeBundle/Resources/config/routing.yml"
-    prefix:   /panel
+    prefix:   /admin
 
 BackOfficeBundle_photo:
     resource: "@BackOfficeBundle/Resources/config/routing/photo.yml"
-    prefix:   /panel/photo
+    prefix:   /admin/photo
 
 BackOfficeBundle_video:
     resource: "@BackOfficeBundle/Resources/config/routing/video.yml"
-    prefix:   /panel/video
+    prefix:   /admin/video
 
 BackOfficeBundle_podcast:
     resource: "@BackOfficeBundle/Resources/config/routing/podcast.yml"
-    prefix:   /panel/podcast
+    prefix:   /admin/podcast
 
 BackOfficeBundle_article:
     resource: "@BackOfficeBundle/Resources/config/routing/article.yml"
-    prefix:   /panel/article
+    prefix:   /admin/article
+
+BackOfficeBundle_event:
+    resource: "@BackOfficeBundle/Resources/config/routing/event.yml"
+    prefix:   /admin/event
 
 BackOfficeBundle_user:
     resource: "@BackOfficeBundle/Resources/config/routing/user.yml"
-    prefix:   /panel/user
+    prefix:   /admin/user
 
 BackOfficeBundle_team:
     resource: "@BackOfficeBundle/Resources/config/routing/team.yml"
-    prefix:   /panel/team
+    prefix:   /admin/team
+
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile

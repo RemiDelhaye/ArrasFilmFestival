@@ -1,0 +1,26 @@
+event:
+    pattern:  /
+    defaults: { _controller: "BackOfficeBundle:Event:index" }
+
+event_new:
+    pattern:  /new
+    defaults: { _controller: "BackOfficeBundle:Event:new" }
+
+event_create:
+    pattern:  /create
+    defaults: { _controller: "BackOfficeBundle:Event:create" }
+    requirements: { _method: post }
+
+event_edit:
+    pattern:  /edit/{id}
+    defaults: { _controller: "BackOfficeBundle:Event:edit" }
+
+event_update:
+    pattern:  /update/{id}
+    defaults: { _controller: "BackOfficeBundle:Event:update" }
+    requirements: { _method: post }
+
+event_delete:
+    pattern:  /delete/{id}
+    defaults: { _controller: "BackOfficeBundle:Event:delete" }
+    requirements: { _method: post }

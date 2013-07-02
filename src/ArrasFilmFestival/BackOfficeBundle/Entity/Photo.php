@@ -229,6 +229,29 @@ class Photo
     }
 
     /**
+     * Set photo
+     *
+     * @param \File $photo
+     * @return Photo
+     */
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+    
+        return $this;
+    }
+
+    /**
+     * Get photo
+     *
+     * @return \File
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
      * Set user_update
      *
      * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate

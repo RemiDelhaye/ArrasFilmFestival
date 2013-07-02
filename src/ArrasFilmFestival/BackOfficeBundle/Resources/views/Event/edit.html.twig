@@ -1,0 +1,79 @@
+{% extends '::template_back.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link href="{{ asset('bundles/bootstrap/css/bootstrap-datetimepicker.min.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="span8 offset2">
+        <form class="form-horizontal" action="{{ path('event_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            <fieldset>
+                <legend>Modifier un événement</legend>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.name, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.name, { 'attr': { 'placeholder': "Titre de l'évènement", 'class': 'span4' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.description, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.description, { 'attr': { 'placeholder': "Description de l'évènement", 'class': 'span4' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.lieu, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.lieu, { 'attr': { 'placeholder': "Lieu de l'évènement", 'class': 'span4' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.startDate, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div id="datetimepicker1" class="input-append date">
+                        {{ form_widget(edit_form.startDate, { 'attr': { 'data-format': 'dd/MM/yyyy hh:mm', 'class': 'span4' } }) }}
+                        <span class="add-on">
+                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.endDate, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div id="datetimepicker2" class="input-append date">
+                        {{ form_widget(edit_form.endDate, { 'attr': { 'data-format': 'dd/MM/yyyy hh:mm', 'class': 'span4' } }) }}
+                        <span class="add-on">
+                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+
+                    {{ form_widget(edit_form._token) }}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Valider les modifications</button>
+                    <button type="reset" class="btn"><i class="icon-refresh"></i> Réinitialiser</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script src="{{ asset('bundles/bootstrap/js/bootstrap-datetimepicker.min.js') }}" type="text/javascript"></script>
+<script type="text/javascript">
+  $(function() {
+    $('#datetimepicker1').datetimepicker({ language: 'fr' });
+    $('#datetimepicker2').datetimepicker({ language: 'fr' });
+  });
+</script>
+{% endblock %}

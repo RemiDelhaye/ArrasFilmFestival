@@ -21,6 +21,8 @@ class AppKernel extends Kernel
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new ArrasFilmFestival\BackOfficeBundle\BackOfficeBundle(),
             new ArrasFilmFestival\FrontOfficeBundle\FrontOfficeBundle(),
+            new Ivory\CKEditorBundle\IvoryCKEditorBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -71,7 +71,7 @@ class Video
      *     mimeTypesMessage = "Les fichiers doivent impérativement être au format avi ou flv."
      * )
      */
-    public $video;
+    private $video;
 
     /**
      * Get id
@@ -196,6 +196,29 @@ class Video
     public function getUpdated()
     {
         return $this->updated;
+    }
+
+    /**
+     * Set video
+     *
+     * @param \File $video
+     * @return Video
+     */
+    public function setVideo($video)
+    {
+        $this->video = $video;
+    
+        return $this;
+    }
+
+    /**
+     * Get video
+     *
+     * @return \File 
+     */
+    public function getVideo()
+    {
+        return $this->video;
     }
 
     /**

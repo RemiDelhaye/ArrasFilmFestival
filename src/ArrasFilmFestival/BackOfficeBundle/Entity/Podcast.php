@@ -78,7 +78,7 @@ class Podcast
      *     mimeTypesMessage = "Les fichiers doivent impérativement être au format mp3."
      * )
      */
-    public $audio;
+    private $audio;
 
     /**
      * Get id
@@ -227,6 +227,29 @@ class Podcast
     public function getUpdated()
     {
         return $this->updated;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return File
+     */
+    public function getAudio()
+    {
+        return $this->audio;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param File
+     * @return Podcast
+     */
+    public function setAudio($audio)
+    {
+        $this->audio = $audio;
+    
+        return $this;
     }
 
     public function getAbsolutePath()

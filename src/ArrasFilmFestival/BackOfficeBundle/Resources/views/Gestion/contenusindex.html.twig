@@ -1,0 +1,220 @@
+{% extends '::template_back.html.twig' %}
+
+{% block body %}
+
+{% set count = 0 %}
+{% set iterator = 0 %}
+
+<h1>Articles</h1>
+
+<table class="table table-striped">
+{% for entity in articles %}
+    <tr>
+        <td><h4>{{ entity.title }}</h4></td>
+        <td>{{ entity.created|date('d/m à H:i') }}</td>
+        <td><a href="{{ path('article_show', { 'id': entity.id }) }}" class="btn btn-inverse" ><i class="icon-eye-open icon-white"></i> Aperçus</a></td>
+    </tr>
+{% else %}
+
+    <h2 class="text-center">Aucun articles publiés pour le moment.</h2>
+
+{% endfor %}
+</table>
+
+<h1>Photos</h1>
+
+<ul class="thumbnails">
+
+{% for photo in photos %}
+     
+    {% set picture = asset('uploads/photos/') ~ photo.path %}
+
+    {%- if count == 3 -%}
+        
+        {% set count = 0 %}
+
+</ul>
+<ul class="thumbnails">
+
+    {%- endif -%}
+
+    {% set count = count + 1 %}
+
+    <li class="span4">
+        <div class="thumbnail">
+            <div class="caption">
+                <h5>{{ photo.title }}</h5>
+            </div>
+            <img src="{{ picture|apply_filter('back_thumb') }}" alt="{{ photo.title }}" width="300" height="200" />
+            <div class="caption">
+                <p>{{ photo.content }}</p>
+                <p><small>Publié par {{ photo.user.name }} {{ photo.user.surname }} <em>le {{ photo.created|date('d/m à H:i') }}</em></small></p>  
+                <p class="text-center">
+                    <a href="{{ path('photo_edit', { 'id': photo.id }) }}" class="btn" ><i class="icon-edit"></i> Modifier</a>
+                    <a href="#myModal{{ photo.id }}" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>
+                </p>
+            </div>
+        </div>  
+    </li>
+
+    <div id="myModal{{ photo.id }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Supprimer la photo</h3>
+        </div>
+        <div class="modal-body">
+            <p>Voulez-vous vraiment supprimer cette photo ?</p>
+            <p><i class="icon-warning-sign"></i> Attention, ceci est irréversible !</p>
+        </div>
+        <div class="modal-footer">
+            <form action="{{ path('photo_delete', { 'id': photo.id }) }}" method="post">
+                {{ form_widget(attribute(delete_forms, iterator)) }}
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+
+{% set iterator = iterator + 1 %}
+
+{% else %}
+
+    <h3 class="text-center">Aucunes photos publiées pour le moment.</h3>
+
+{% endfor %}
+
+</ul>
+
+<h1>Podcasts</h1>
+
+<ul class="thumbnails">
+
+{% for podcast in podcasts %}
+     
+
+    {%- if count == 3 -%}
+        
+        {% set count = 0 %}
+
+</ul>
+<ul class="thumbnails">
+
+    {%- endif -%}
+
+    {% set count = count + 1 %}
+
+    <li class="span4">
+        <div class="thumbnail">
+            <div class="caption">
+                <h5>{{ podcast.title }}</h5>
+            </div>
+            <audio controls style="width: 290px;">
+                <source src="{{ asset('uploads/audios/') }}{{ podcast.path }}" type="audio/mpeg">
+                Votre navigateur n'est pas capable de supporter les fichiers audio.
+            </audio>
+            <div class="caption">
+                <p>{{ podcast.content }}</p>
+                <p><small><em>{{ podcast.created|date('d/m à H:i') }}</em></small></p>  
+                <p class="text-center">
+                    <a href="{{ path('podcast_edit', { 'id': podcast.id }) }}" class="btn" ><i class="icon-edit"></i> Modifier</a>
+                    <a href="#myModal{{ podcast.id }}" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>
+                </p>
+            </div>
+        </div>  
+    </li>
+
+    <div id="myModal{{ podcast.id }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Supprimer le podcast</h3>
+        </div>
+        <div class="modal-body">
+            <p>Voulez-vous vraiment supprimer ce podcast ?</p>
+            <p><i class="icon-warning-sign"></i> Attention, ceci est irréversible !</p>
+        </div>
+        <div class="modal-footer">
+            <form action="{{ path('podcast_delete', { 'id': podcast.id }) }}" method="post">
+                {{ form_widget(attribute(delete_forms, iterator)) }}
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+
+{% set iterator = iterator + 1 %}
+
+{% else %}
+
+    <h3 class="text-center">Aucuns podcasts publiés pour le moment.</h3>
+
+{% endfor %}
+
+</ul>
+
+<h1>Vidéos</h1>
+
+<ul class="thumbnails">
+
+{% for video in videos %}
+     
+
+    {%- if count == 3 -%}
+        
+        {% set count = 0 %}
+
+</ul>
+<ul class="thumbnails">
+
+    {%- endif -%}
+
+    {% set count = count + 1 %}
+
+    <li class="span4">
+        <div class="thumbnail">
+            <div class="caption">
+                <h5>{{ video.title }}</h5>
+            </div>
+            <video id="example_video_1" class="video-js vjs-default-skin" controls preload="auto" width="290" height="200" data-setup='{{ asset('uploads/videos/') }}{{ video.path }}'>
+                <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
+                <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
+                <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />
+            </video>
+            <div class="caption">
+                <p><small><em>{{ video.created|date('d/m à H:i') }}</em></small></p>  
+                <p class="text-center">
+                    <a href="{{ path('video_edit', { 'id': video.id }) }}" class="btn" ><i class="icon-edit"></i> Modifier</a>
+                    <a href="#myModal{{ video.id }}" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>
+                </p>
+            </div>
+        </div>  
+    </li>
+
+    <div id="myModal{{ video.id }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Supprimer la vidéo</h3>
+        </div>
+        <div class="modal-body">
+            <p>Voulez-vous vraiment supprimer cette vidéo ?</p>
+            <p><i class="icon-warning-sign"></i> Attention, ceci est irréversible !</p>
+        </div>
+        <div class="modal-footer">
+            <form action="{{ path('video_delete', { 'id': video.id }) }}" method="post">
+                {{ form_widget(attribute(delete_forms, iterator)) }}
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+
+{% set iterator = iterator + 1 %}
+
+{% else %}
+
+    <h3 class="text-center">Aucunes vidéos publiés pour le moment.</h3>
+
+{% endfor %}
+
+</ul>
+
+{% endblock %}

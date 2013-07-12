@@ -21,14 +21,7 @@ class User extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="login", type="string", length=255)
-     */
-    protected $login;
-
+   
     /**
      * @var string
      *
@@ -44,40 +37,32 @@ class User extends BaseUser
     protected $surname;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Team", inversedBy="users")
-     * @ORM\JoinColumn(name="team_id", referencedColumnName="id")
+     * @var string
+     *
+     * @ORM\Column(name="team", type="string", length=255)
      */
     protected $team;
 
+
     /**
-     * @ORM\OneToMany(targetEntity="Photo", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Photo", mappedBy="user", cascade={"remove"})
      */
     protected $photos;
 
     /**
-     * @ORM\OneToMany(targetEntity="Photo", mappedBy="user_update")
-     */
-    protected $photos_update;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Podcast", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Podcast", mappedBy="user", cascade={"remove"})
      */
     protected $podcasts;
 
     /**
-     * @ORM\OneToMany(targetEntity="Podcast", mappedBy="user_update")
-     */
-    protected $podcasts_update;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Video", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Video", mappedBy="user", cascade={"remove"})
      */
     protected $videos;
 
     /**
-     * @ORM\OneToMany(targetEntity="Video", mappedBy="user_update")
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="user", cascade={"remove"})
      */
-    protected $videos_update;
+    protected $articles;
 
     /**
      * Get id
@@ -87,52 +72,6 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set login
-     *
-     * @param string $login
-     * @return User
-     */
-    public function setLogin($login)
-    {
-        $this->login = $login;
-    
-        return $this;
-    }
-
-    /**
-     * Get login
-     *
-     * @return string 
-     */
-    public function getLogin()
-    {
-        return $this->login;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     * @return User
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string 
-     */
-    public function getPassword()
-    {
-        return $this->password;
     }
 
     /**
@@ -179,69 +118,6 @@ class User extends BaseUser
     public function getSurname()
     {
         return $this->surname;
-    }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->medias = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * Set team
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Team $team
-     * @return User
-     */
-    public function setTeam(\ArrasFilmFestival\BackOfficeBundle\Entity\Team $team = null)
-    {
-        $this->team = $team;
-    
-        return $this;
-    }
-
-    /**
-     * Get team
-     *
-     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\Team 
-     */
-    public function getTeam()
-    {
-        return $this->team;
-    }
-
-    /**
-     * Add medias
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Media $medias
-     * @return User
-     */
-    public function addMedia(\ArrasFilmFestival\BackOfficeBundle\Entity\Media $medias)
-    {
-        $this->medias[] = $medias;
-    
-        return $this;
-    }
-
-    /**
-     * Remove medias
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Media $medias
-     */
-    public function removeMedia(\ArrasFilmFestival\BackOfficeBundle\Entity\Media $medias)
-    {
-        $this->medias->removeElement($medias);
-    }
-
-    /**
-     * Get medias
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getMedias()
-    {
-        return $this->medias;
     }
 
     /**
@@ -311,72 +187,6 @@ class User extends BaseUser
     }
 
     /**
-     * Add photos_update
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photosUpdate
-     * @return User
-     */
-    public function addPhotosUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photosUpdate)
-    {
-        $this->photos_update[] = $photosUpdate;
-    
-        return $this;
-    }
-
-    /**
-     * Remove photos_update
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photosUpdate
-     */
-    public function removePhotosUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Photo $photosUpdate)
-    {
-        $this->photos_update->removeElement($photosUpdate);
-    }
-
-    /**
-     * Get photos_update
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPhotosUpdate()
-    {
-        return $this->photos_update;
-    }
-
-    /**
-     * Add podcasts_update
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcastsUpdate
-     * @return User
-     */
-    public function addPodcastsUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcastsUpdate)
-    {
-        $this->podcasts_update[] = $podcastsUpdate;
-    
-        return $this;
-    }
-
-    /**
-     * Remove podcasts_update
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcastsUpdate
-     */
-    public function removePodcastsUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Podcast $podcastsUpdate)
-    {
-        $this->podcasts_update->removeElement($podcastsUpdate);
-    }
-
-    /**
-     * Get podcasts_update
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPodcastsUpdate()
-    {
-        return $this->podcasts_update;
-    }
-
-    /**
      * Add videos
      *
      * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Video $videos
@@ -410,35 +220,69 @@ class User extends BaseUser
     }
 
     /**
-     * Add videos_update
+     * Set team
      *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Video $videosUpdate
+     * @param string $team
      * @return User
      */
-    public function addVideosUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Video $videosUpdate)
+    public function setTeam($team)
     {
-        $this->videos_update[] = $videosUpdate;
+        $this->team = $team;
     
         return $this;
     }
 
     /**
-     * Remove videos_update
+     * Get team
      *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Video $videosUpdate
+     * @return string 
      */
-    public function removeVideosUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\Video $videosUpdate)
+    public function getTeam()
     {
-        $this->videos_update->removeElement($videosUpdate);
+        return $this->team;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->photos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->podcasts = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->videos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->articles = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add articles
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Article $articles
+     * @return User
+     */
+    public function addArticle(\ArrasFilmFestival\BackOfficeBundle\Entity\Article $articles)
+    {
+        $this->articles[] = $articles;
+    
+        return $this;
     }
 
     /**
-     * Get videos_update
+     * Remove articles
+     *
+     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\Article $articles
+     */
+    public function removeArticle(\ArrasFilmFestival\BackOfficeBundle\Entity\Article $articles)
+    {
+        $this->articles->removeElement($articles);
+    }
+
+    /**
+     * Get articles
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getVideosUpdate()
+    public function getArticles()
     {
-        return $this->videos_update;
+        return $this->articles;
     }
 }

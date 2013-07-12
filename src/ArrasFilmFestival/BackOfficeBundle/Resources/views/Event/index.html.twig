@@ -29,8 +29,8 @@
             <td>{{ entity.name }}</td>
             <td>{{ entity.description }}</td>
             <td>{{ entity.lieu }}</td>
-            <td>{% if entity.startDate %}{{ entity.startDate|date('Y-m-d H:i') }}{% endif %}</td>
-            <td>{% if entity.endDate %}{{ entity.endDate|date('Y-m-d H:i') }}{% endif %}</td>
+            <td>{{ entity.startDate|date('d/m à H:i') }}</td>
+            <td>{{ entity.endDate|date('d/m à H:i') }}</td>
             <td>
                 <a href="{{ path('event_edit', { 'id': entity.id }) }}" class="btn" ><i class="icon-edit"></i> Modifier</a>
                 <a href="#myModal{{ entity.id }}" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>

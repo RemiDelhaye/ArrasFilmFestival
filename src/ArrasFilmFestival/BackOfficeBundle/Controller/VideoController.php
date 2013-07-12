@@ -4,6 +4,12 @@ namespace ArrasFilmFestival\BackOfficeBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+
+use \FOS\UserBundle\Model\UserInterface;
 
 use ArrasFilmFestival\BackOfficeBundle\Entity\Video;
 
@@ -20,9 +26,11 @@ class VideoController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.context')->getToken()->getUser();
         $deleteForm = null;
 
-        $entities = $em->getRepository('BackOfficeBundle:Video')->findAll();
+        $query = $em->createQuery('SELECT p FROM BackOfficeBundle:Video p WHERE p.user = :id')->setParameter('id', $user->getId());
+        $entities = $query->getResult();
 
         foreach($entities as $entity){
             $deleteForm[] = $this->createDeleteForm($entity->getId())->createView();
@@ -56,17 +64,32 @@ class VideoController extends Controller
     public function createAction(Request $request)
     {
         $entity  = new Video();
+        $user = $this->container->get('security.context')->getToken()->getUser();
         $form = $this->createFormEntity($entity);
         $form->bind($request);
         $entity->setCreated(new \DateTime('now'));
         $entity->setUpdated(new \DateTime('now'));
+        $entity->setUser($user);
+        $entity->setValidate(0);
+
+
+        if ($this->get('security.context')->isGranted('ROLE_SUPER_ADMIN') || $this->get('security.context')->isGranted('ROLE_POLECOM')) {
+            $entity->setValidate(1);
+        }
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('Video'));
+            $aclProvider = $this->get('security.acl.provider');
+            $objectIdentity = ObjectIdentity::fromDomainObject($entity);
+            $acl = $aclProvider->createAcl($objectIdentity);
+            $securityIdentity = UserSecurityIdentity::fromAccount($user);
+            $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+            $aclProvider->updateAcl($acl);
+
+            return $this->redirect($this->generateUrl('video'));
         }
 
         return $this->render('BackOfficeBundle:Video:new.html.twig', array(
@@ -85,6 +108,13 @@ class VideoController extends Controller
 
         $entity = $em->getRepository('BackOfficeBundle:Video')->find($id);
 
+        if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) {
+            $securityContext = $this->get('security.context');
+            if (false === $securityContext->isGranted('EDIT', $entity)) {
+                throw new AccessDeniedException();
+            }
+        }
+        
         if (!$entity) {
             throw $this->createNotFoundException("La Video désirée n'existe pas.");
         }
@@ -120,7 +150,7 @@ class VideoController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('Video'));
+            return $this->redirect($this->generateUrl('video'));
         }
 
         return $this->render('BackOfficeBundle:Video:edit.html.twig', array(
@@ -151,7 +181,7 @@ class VideoController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('Video'));
+        return $this->redirect($this->generateUrl('video'));
     }
 
     private function createDeleteForm($id)

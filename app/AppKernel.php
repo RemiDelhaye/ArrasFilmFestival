@@ -23,6 +23,9 @@ class AppKernel extends Kernel
             new ArrasFilmFestival\FrontOfficeBundle\FrontOfficeBundle(),
             new Ivory\CKEditorBundle\IvoryCKEditorBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
+            new FM\ElfinderBundle\FMElfinderBundle(),
+            new Liip\ImagineBundle\LiipImagineBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

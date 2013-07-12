@@ -17,6 +17,7 @@
 
 {% for entity in entities %}
      
+     {% set picture = asset('uploads/photos/') ~ entity.path %}
 
     {%- if count == 3 -%}
         
@@ -34,10 +35,10 @@
             <div class="caption">
                 <h5>{{ entity.title }}</h5>
             </div>
-            <img src="{{ asset('uploads/photos/') }}{{entity.path}}" alt="{{ entity.title }}" width="300" height="200" />
+            <img src="{{ picture|imagine_filter('back_thumb') }}" alt="{{ entity.title }}" />
             <div class="caption">
                 <p>{{ entity.content }}</p>
-                <p><small><em>{{ entity.created|date('d/m à H:i') }}</em></small></p>  
+                <p><small><em>le {{ entity.created|date('d/m à H:i') }}</em></small></p>  
                 <p class="text-center">
                     <a href="{{ path('photo_edit', { 'id': entity.id }) }}" class="btn" ><i class="icon-edit"></i> Modifier</a>
                     <a href="#myModal{{ entity.id }}" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>

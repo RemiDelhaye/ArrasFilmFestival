@@ -1,0 +1,28 @@
+{% extends '::template_front.html.twig' %}
+
+{% block title %}{{ parent() }}Articles{% if(app.request.query.get('page') > 1) %} - Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
+
+{% block description %}Bienvenue sur le site du Pôlecom pour l'Arras Film Festival, cette page est réservée à la consultation d'articles. {% if(app.request.query.get('page') > 1) %}Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
+
+{% block id %}articlepage{% endblock %}
+
+
+{% block body %}
+<h1 class="grid_12 breadcumb">Articles</h1>
+{% for article in pagination %}
+	<section class="content grid_12">
+		<article>
+		    <h3>{{ article.title }}</h3>
+		    <p>{{ article.content|raw }}</p>
+		    <div class="clearfix"></div>
+		<p class="info-data">Publié par <span class="info-data-name">{{ article.user.name }} {{ article.user.surname }}</span> pour <span class="info-data-name">{% if(article.user.team == 'polecom') %}le Pôlecom{% else %}Baudimont{% endif %}</span> le {{ article.created|date('d/m à H:i') }}</p>
+		</article>
+	</section>
+{% else %}
+	<p>Aucuns articles pour le moment.</p>
+{% endfor %}
+
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>
+{% endblock %}

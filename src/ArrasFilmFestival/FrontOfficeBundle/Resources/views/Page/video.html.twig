@@ -1,0 +1,40 @@
+{% extends '::template_front.html.twig' %}
+
+{% block title %}{{ parent() }}Videos{% if(app.request.query.get('page') > 1) %} - Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
+
+{% block description %}Bienvenue sur le site du Pôlecom pour l'Arras Film Festival, cette page est réservée à la consultation de vidéos. {% if(app.request.query.get('page') > 1) %}Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
+
+{% block id %}videopage{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link href="http://vjs.zencdn.net/4.0/video-js.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+<h1 class="grid_12 breadcumb">Vidéos</h1>
+{% for video in pagination %}
+<section class="content_photo grid_8 push_2">
+		<article>
+			<video id="video.title" class="video-js vjs-default-skin" controls preload="auto" width="600" height="350" data-setup='{{ asset('uploads/videos/') }}{{ video.path }}'>
+                <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
+                <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
+                <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />
+            </video>
+			<h6>{{ video.title }} <small>- postée par {{ video.user.name }} {{ video.user.surname }}</small></h6>
+		</article>
+</section>
+<div class="clearfix"></div>
+{% else %}
+	<p>Aucunes vidéos pour le moment.</p>
+{% endfor %}
+<div class="clearfix"></div>
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="{{ asset('bundles/ressources/js/jQuery.js') }}" type="text/javascript"></script>
+<script src="http://vjs.zencdn.net/4.0/video.js" type="text/javascript"></script>
+{% endblock %}

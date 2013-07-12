@@ -1,0 +1,28 @@
+{% extends '::template_front.html.twig' %}
+
+{% block title %}{{ parent() }}Podcasts{% if(app.request.query.get('page') > 1) %} - Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
+
+{% block description %}Bienvenue sur le site du Pôlecom pour l'Arras Film Festival, cette page est réservée à la consultation de podcast. {% if(app.request.query.get('page') > 1) %}Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
+
+{% block id %}podcastpage{% endblock %}
+
+{% block body %}
+<h1 class="grid_12 breadcumb">Podcasts</h1>
+{% for podcast in pagination %}
+<section class="content_photo grid_4">
+        <article>
+            <audio controls style="width: 280px;">
+                <source src="{{ asset('uploads/audios/') }}{{ podcast.path }}" type="audio/mpeg">
+                Votre navigateur n'est pas capable de supporter les fichiers audio.
+            </audio>
+            <h6>{{ podcast.title }} <small>- postée par {{ podcast.user.name }} {{ podcast.user.surname }}</small></h6>
+        </article>
+</section>
+{% else %}
+	<p>Aucuns podcasts pour le moment.</p>
+{% endfor %}
+<div class="clearfix"></div>
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>
+{% endblock %}

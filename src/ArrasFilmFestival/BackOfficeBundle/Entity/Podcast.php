@@ -65,12 +65,6 @@ class Podcast
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="videos_update")
-     * @ORM\JoinColumn(name="user_update_id", referencedColumnName="id")
-     */
-    private $user_update;
-
-    /**
      * @Assert\File(
      *     maxSize = "30720k",
      *     maxSizeMessage = "Le fichier ne doit pas dépasser 30Mo, veuillez en choisir un autre.",
@@ -79,6 +73,13 @@ class Podcast
      * )
      */
     private $audio;
+
+    /**
+    * @var boolean
+    *
+    * @ORM\Column(name="isEnabled", type="boolean")
+    */
+    private $validate;
 
     /**
      * Get id
@@ -271,6 +272,14 @@ class Podcast
         return __DIR__.'/../../../../web/'.$this->getUploadDir();
     }
 
+    /**
+     * @ORM\PreRemove()
+     */
+    public function storeFilenameForRemove()
+    {
+        $this->filenameForRemove = $this->getAbsolutePath();
+    }
+
     protected function getUploadDir()
     {
         return 'uploads/audios';
@@ -334,5 +343,28 @@ class Podcast
     public function getUserUpdate()
     {
         return $this->user_update;
+    }
+
+    /**
+     * Set validate
+     *
+     * @param boolean $validate
+     * @return Podcast
+     */
+    public function setValidate($validate)
+    {
+        $this->validate = $validate;
+    
+        return $this;
+    }
+
+    /**
+     * Get validate
+     *
+     * @return boolean 
+     */
+    public function getValidate()
+    {
+        return $this->validate;
     }
 }

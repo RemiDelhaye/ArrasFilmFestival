@@ -63,18 +63,6 @@ class Article extends \ArrasFilmFestival\BackOfficeBundle\Entity\Article impleme
         return parent::getTitle();
     }
 
-    public function setCreated($created)
-    {
-        $this->__load();
-        return parent::setCreated($created);
-    }
-
-    public function getCreated()
-    {
-        $this->__load();
-        return parent::getCreated();
-    }
-
     public function setContent($content)
     {
         $this->__load();
@@ -87,10 +75,58 @@ class Article extends \ArrasFilmFestival\BackOfficeBundle\Entity\Article impleme
         return parent::getContent();
     }
 
+    public function setCreated($created)
+    {
+        $this->__load();
+        return parent::setCreated($created);
+    }
+
+    public function getCreated()
+    {
+        $this->__load();
+        return parent::getCreated();
+    }
+
+    public function setUser(\ArrasFilmFestival\BackOfficeBundle\Entity\User $user = NULL)
+    {
+        $this->__load();
+        return parent::setUser($user);
+    }
+
+    public function getUser()
+    {
+        $this->__load();
+        return parent::getUser();
+    }
+
+    public function setValidate($validate)
+    {
+        $this->__load();
+        return parent::setValidate($validate);
+    }
+
+    public function getValidate()
+    {
+        $this->__load();
+        return parent::getValidate();
+    }
+
+    public function setSlug($slug)
+    {
+        $this->__load();
+        return parent::setSlug($slug);
+    }
+
+    public function getSlug()
+    {
+        $this->__load();
+        return parent::getSlug();
+    }
+
 
     public function __sleep()
     {
-        return array('__isInitialized__', 'id', 'title', 'created', 'content');
+        return array('__isInitialized__', 'id', 'title', 'content', 'slug', 'created', 'validate', 'user');
     }
 
     public function __clone()

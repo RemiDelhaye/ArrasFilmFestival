@@ -1,0 +1,34 @@
+{% extends '::template_front.html.twig' %}
+
+{% block title %}{{ parent() }}Programme{% endblock %}
+
+{% block description %}Bienvenue sur le site du Pôlecom pour l'Arras Film Festival, cette page est réservée à la consultation du programme.{% endblock %}
+
+{% block id %}programmepage{% endblock %}
+
+{% set jour = 1 %}
+{% set tmp = 'd/m' %}
+
+{% block body %}
+<h1 class="grid_12 breadcumb">Programme</h1>
+{% for event in events %}
+	{% if(tmp != event.startDate|date('d/m')) %}
+	<h3 class="grid_12">Jour {{ jour }}</h3>
+	{% endif %}
+	<section class="content_photo grid_4">
+		<article>
+			<h4 class="text_center">{{ event.name }}</h4>
+			<p class="text_center"><small><i>{{ event.startDate|date('d/m à H:i') }} - {{ event.endDate|date('d/m à H:i') }}</i></small></p>
+			<p class="text_center"><b>{{ event.lieu }}</b></p>
+			<p class="text_center">{{ event.description }}</p>
+		</article>
+	</section>
+	{% if(tmp != event.startDate|date('d/m')) %}
+	<div class="clearfix"></div>
+	{% set jour = jour + 1 %}
+	{% endif %}
+	{% set tmp = event.startDate|date('d/m') %}
+{% else %}
+	<p>Aucuns événements pour le moment.</p>
+{% endfor %}
+{% endblock %}

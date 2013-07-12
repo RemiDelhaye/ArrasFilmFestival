@@ -1,41 +1,44 @@
-<h1>Article</h1>
+{% extends '::template_back.html.twig' %}
 
-<table class="record_properties">
-    <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ entity.id }}</td>
-        </tr>
-        <tr>
-            <th>Title</th>
-            <td>{{ entity.title }}</td>
-        </tr>
-        <tr>
-            <th>Content</th>
-            <td>{{ entity.content }}</td>
-        </tr>
-        <tr>
-            <th>Created</th>
-            <td>{{ entity.created|date('Y-m-d H:i:s') }}</td>
-        </tr>
-    </tbody>
-</table>
+{% block body %}
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('article') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('article_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>
-        <form action="{{ path('article_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
-        </form>
-    </li>
-</ul>
+<h1>Aperçus</h1>
+<div class="thumbnails">
+    <div class="span12">
+        <div class="thumbnail">
+            <div class="caption">
+                <h5>{{ entity.title }}</h5>
+            </div>
+            <div class="caption">
+                <p>{{ entity.content|raw }}</p>
+                <div class="clearfix"></div>
+                <p><small><em>le {{ entity.created|date('d/m à H:i') }}</em></small></p>  
+                <p class="text-center">
+                    <a href="{{ path('article_edit', { 'id': entity.id }) }}" class="btn" ><i class="icon-edit"></i> Modifier</a>
+                    <a href="#myModal{{ entity.id }}" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a>
+                    <a href="{{ path('article') }}" role="button" class="btn btn-info"><i class="icon-list icon-white"></i> Retour à la liste</a>
+                </p>
+            </div>
+        </div>  
+
+        <div id="myModal{{ entity.id }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Supprimer l'article</h3>
+            </div>
+            <div class="modal-body">
+                <p>Voulez-vous vraiment supprimer cet article ?</p>
+                <p><i class="icon-warning-sign"></i> Attention, ceci est irréversible !</p>
+            </div>
+            <div class="modal-footer">
+                <form action="{{ path('article_delete', { 'id': entity.id }) }}" method="post">
+                    {{ form_widget(delete_form) }}
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

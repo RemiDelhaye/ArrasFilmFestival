@@ -12,15 +12,15 @@ video_create:
     requirements: { _method: post }
 
 video_edit:
-    pattern:  /{id}/edit
+    pattern:  /edit/{id}
     defaults: { _controller: "BackOfficeBundle:Video:edit" }
 
 video_update:
-    pattern:  /{id}/update
+    pattern:  /update/{id}
     defaults: { _controller: "BackOfficeBundle:Video:update" }
     requirements: { _method: post }
 
 video_delete:
-    pattern:  /{id}/delete
+    pattern:  /delete/{id}
     defaults: { _controller: "BackOfficeBundle:Video:delete" }
     requirements: { _method: post }

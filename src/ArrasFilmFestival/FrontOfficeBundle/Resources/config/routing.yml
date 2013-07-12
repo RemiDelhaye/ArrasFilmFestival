@@ -1,3 +1,28 @@
 front_office_homepage:
     pattern:  /
     defaults: { _controller: FrontOfficeBundle:Page:home }
+
+front_office_articlepage:
+    pattern:  /article
+    defaults: { _controller: FrontOfficeBundle:Page:article }
+
+front_office_showarticlepage:
+    pattern:  /article/{slug}
+    defaults: { _controller: FrontOfficeBundle:Page:show }
+
+front_office_photopage:
+    pattern:  /photo
+    defaults: { _controller: FrontOfficeBundle:Page:photo }
+
+front_office_videopage:
+    pattern:  /video
+    defaults: { _controller: FrontOfficeBundle:Page:video }
+
+front_office_podcastpage:
+    pattern:  /podcast
+    defaults: { _controller: FrontOfficeBundle:Page:podcast }
+
+front_office_programmepage:
+    pattern:  /programme
+    defaults: { _controller: FrontOfficeBundle:Page:programme }
+

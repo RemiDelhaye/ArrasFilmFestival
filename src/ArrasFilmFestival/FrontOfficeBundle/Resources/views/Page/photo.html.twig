@@ -1,0 +1,36 @@
+{% extends '::template_front.html.twig' %}
+
+{% block title %}{{ parent() }}Photos{% if(app.request.query.get('page') > 1) %} - Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
+
+{% block description %}Bienvenue sur le site du Pôlecom pour l'Arras Film Festival, cette page est réservée à la consultation de photo. {% if(app.request.query.get('page') > 1) %}Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
+
+{% block id %}photopage{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link href="{{ asset('bundles/ressources/css/lightbox.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+<h1 class="grid_12 breadcumb">Photos</h1>
+{% for photo in pagination %}
+{% set picture = asset('uploads/photos/') ~ photo.path %}
+<section class="content_photo grid_4">
+		<article>
+			<a href="{{ picture|imagine_filter('front_widen') }}" rel="lightbox[AFF]" title="{{ photo.content }} - Postée par {{ photo.user.name}} {{ photo.user.surname }}"><img src="{{ picture|imagine_filter('front_thumb') }}" alt="{{ photo.title }}" /></a>
+			<h6>{{ photo.title }}</h6>
+		</article>
+</section>
+{% else %}
+	<p>Aucunes photos pour le moment.</p>
+{% endfor %}
+<div class="clearfix"></div>
+<div class="navigation">
+    {{ knp_pagination_render(pagination) }}
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="{{ asset('bundles/ressources/js/jquery-1.7.2.min.js') }}"></script>
+<script src="{{ asset('bundles/ressources/js/lightbox.js') }}"></script>
+{% endblock %}

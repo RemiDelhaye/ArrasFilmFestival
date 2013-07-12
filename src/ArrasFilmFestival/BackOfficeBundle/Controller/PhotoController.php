@@ -4,6 +4,12 @@ namespace ArrasFilmFestival\BackOfficeBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+
+use \FOS\UserBundle\Model\UserInterface;
 
 use ArrasFilmFestival\BackOfficeBundle\Entity\Photo;
 
@@ -20,9 +26,11 @@ class PhotoController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.context')->getToken()->getUser();
         $deleteForm = null;
 
-        $entities = $em->getRepository('BackOfficeBundle:Photo')->findAll();
+        $query = $em->createQuery('SELECT p FROM BackOfficeBundle:Photo p WHERE p.user = :id')->setParameter('id', $user->getId());
+        $entities = $query->getResult();
 
         foreach($entities as $entity){
             $deleteForm[] = $this->createDeleteForm($entity->getId())->createView();
@@ -56,15 +64,29 @@ class PhotoController extends Controller
     public function createAction(Request $request)
     {
         $entity  = new Photo();
+        $user = $this->container->get('security.context')->getToken()->getUser();
         $form = $this->createFormEntity($entity);
         $form->bind($request);
         $entity->setCreated(new \DateTime('now'));
         $entity->setUpdated(new \DateTime('now'));
+        $entity->setUser($user);
+        $entity->setValidate(0);
+
+        if ($this->get('security.context')->isGranted('ROLE_SUPER_ADMIN') || $this->get('security.context')->isGranted('ROLE_POLECOM')) {
+            $entity->setValidate(1);
+        }
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
+
+            $aclProvider = $this->get('security.acl.provider');
+            $objectIdentity = ObjectIdentity::fromDomainObject($entity);
+            $acl = $aclProvider->createAcl($objectIdentity);
+            $securityIdentity = UserSecurityIdentity::fromAccount($user);
+            $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+            $aclProvider->updateAcl($acl);
 
             return $this->redirect($this->generateUrl('photo'));
         }
@@ -85,6 +107,13 @@ class PhotoController extends Controller
 
         $entity = $em->getRepository('BackOfficeBundle:Photo')->find($id);
 
+        if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) {
+            $securityContext = $this->get('security.context');
+            if (false === $securityContext->isGranted('EDIT', $entity)) {
+                throw new AccessDeniedException();
+            }
+        }
+        
         if (!$entity) {
             throw $this->createNotFoundException("La photo désirée n'existe pas.");
         }
@@ -135,7 +164,6 @@ class PhotoController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-
         $form = $this->createDeleteForm($id);
         $form->bind($request);
 

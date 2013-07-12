@@ -1,0 +1,46 @@
+{% extends '::template_back.html.twig' %}
+
+{% block body %}
+{% set iterator = 0 %}
+
+<h1>Utilisateurs</h1>
+
+<table class="table table-striped">
+	<tr>
+		<th>Prénom</th>
+		<th>Nom</th>
+		<th>Mail</th>
+		<th>Groupe</th>
+		<th>Suppression</th>
+	</tr>
+{% for entity in users %}
+    <tr>
+        <td>{{ entity.name }}</td>
+        <td>{{ entity.surname }}</td>
+        <td>{{ entity.email }}</td>
+        <td>{{ entity.team }}</td>
+        <td><a href="#myModal{{ entity.id }}" role="button" class="btn btn-danger" data-toggle="modal"><i class="icon-trash icon-white"></i> Supprimer</a></td>
+    </tr>
+
+    <div id="myModal{{ entity.id }}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <h3 id="myModalLabel">Supprimer l'utilisateur</h3>
+	    </div>
+	    <div class="modal-body">
+	        <p>Voulez-vous vraiment supprimer cet utilisateur ?</p>
+	        <p><i class="icon-warning-sign"></i> Attention, ceci est irréversible !</p>
+	    </div>
+	    <div class="modal-footer">
+	        <form action="{{ path('back_office_gestion_user_delete', { 'id': entity.id }) }}" method="post">
+	            {{ form_widget(attribute(delete_forms, iterator)) }}
+	            <button class="btn" data-dismiss="modal" aria-hidden="true">Annuler</button>
+	            <button type="submit" class="btn btn-danger">Supprimer</button>
+	        </form>
+	    </div>
+	</div>
+
+	{% set iterator = iterator + 1 %}
+{% endfor %}
+</table>
+{% endblock %}

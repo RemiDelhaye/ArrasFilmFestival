@@ -65,12 +65,6 @@ class Photo
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="photos_update")
-     * @ORM\JoinColumn(name="user_update_id", referencedColumnName="id")
-     */
-    private $user_update;
-
-    /**
      * @Assert\File(
      *     maxSize = "2048k",
      *     maxSizeMessage = "Les fichiers ne doivent pas dépasser 2 Mo.",  
@@ -79,6 +73,13 @@ class Photo
      * )
      */
     public $image;
+
+    /**
+    * @var boolean
+    *
+    * @ORM\Column(name="isEnabled", type="boolean")
+    */
+    private $validate;
 
     /**
      * Get id
@@ -251,29 +252,6 @@ class Photo
         return $this->photo;
     }
 
-    /**
-     * Set user_update
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate
-     * @return Photo
-     */
-    public function setUserUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate = null)
-    {
-        $this->user_update = $userUpdate;
-    
-        return $this;
-    }
-
-    /**
-     * Get user_update
-     *
-     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
-     */
-    public function getUserUpdate()
-    {
-        return $this->user_update;
-    }
-
     public function getAbsolutePath()
     {
         return null === $this->path
@@ -296,6 +274,14 @@ class Photo
     protected function getUploadDir()
     {
         return 'uploads/photos';
+    }
+
+    /**
+     * @ORM\PreRemove()
+     */
+    public function storeFilenameForRemove()
+    {
+        $this->filenameForRemove = $this->getAbsolutePath();
     }
 
     /**
@@ -333,5 +319,28 @@ class Photo
         if ($image = $this->getAbsolutePath()) {
             unlink($image);
         }
+    }
+
+    /**
+     * Set validate
+     *
+     * @param boolean $validate
+     * @return Photo
+     */
+    public function setValidate($validate)
+    {
+        $this->validate = $validate;
+    
+        return $this;
+    }
+
+    /**
+     * Get validate
+     *
+     * @return boolean 
+     */
+    public function getValidate()
+    {
+        return $this->validate;
     }
 }

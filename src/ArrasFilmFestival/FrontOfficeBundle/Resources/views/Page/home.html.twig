@@ -1,1 +1,88 @@
-Hello
+{% extends '::template_front.html.twig' %}
+
+{% block title %}{{ parent() }}Accueil{% endblock %}
+
+{% block description %}Bienvenue sur le site du Pôlecom pour l'Arras Film Festival, vous pourrez consulter toutes les actualités sur cet évènements.{% endblock %}
+
+{% block id %}homepage{% endblock %}
+
+{% block body %}
+<h1 class="grid_12 breadcumb">Accueil</h1>
+
+<section class="live grid_6 margin"></section>
+
+<section class="grid_6 margin twitter">
+    <a class="twitter-timeline" href="https://twitter.com/search?q=%23ArrasFilmFestival" data-widget-id="355365110845407234">Tweets concernant "#ArrasFilmFestival"</a>
+	<script>
+		!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+	</script>
+</section>
+
+<div class="clear"></div>
+
+<section class="grid_4 column">
+	<section class="presentation">
+		<h2>Derniers Articles</h2>
+		{% for article in articles %}
+			<div class="article_item">
+				<h6><a href="{{ path('front_office_showarticlepage', { 'slug': article.slug }) }}">{{ article.title }}</a></h6>
+				<p><small><i>Publié par {{ article.user.name }} {{ article.user.surname }} le {{ article.created|date('d/m à H:i') }}</i></small></p>
+			</div>
+		{% else %}
+			<p>Aucuns articles pour le moment.</p>
+		{% endfor %}
+	</section>
+</section>
+
+<section class="grid_4 column">
+	<section class="presentation">
+		<h2>Prochain évènement</h2>
+		<img src="{{ asset('bundles/ressources/img/event.jpg') }}" />
+		{% if event is empty %}
+			<p>Aucuns évènements prévus pour l'instant.</p>
+		{% else %}
+			<h4 class="text_center">{{ event.name }}</h4>
+			<p class="text_center"><small><i>{{ event.startDate|date('d/m à H:i') }} - {{ event.endDate|date('d/m à H:i') }}</i></small></p>
+			<p class="text_center"><b>{{ event.lieu }}</b></p>
+			<p class="text_center">{{ event.description }}</p>
+		{% endif %}
+		<p class="text_center"><a href="">Consulter le programme</a></p>
+	</section>
+</section>
+
+<section class="grid_4 column">
+	<section class="presentation">
+		<h2>Informations</h2>
+		<div id="map"></div>
+		<p><b>Tél</b> : 03.02.04.05.06</p>
+		<p><b>Lieu</b> : Grande place, Arras, 62000</p>
+		<p><b>Informations supplémentaire</b> : Restauration possible sur place, parking de 100 places à proximité</p>
+	</section>
+</section>
+
+{% endblock %}
+
+{% block javascript %}
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+<script>
+var map;
+function initialize() {
+  var mapOptions = {
+    zoom: 15,
+    center: new google.maps.LatLng(50.2921170, 2.7809250),
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    disableDefaultUI: true,
+  };
+
+  map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+   var marker = new google.maps.Marker({
+      position: new google.maps.LatLng(50.2921170, 2.7809250),
+      map: map,
+      title:"Nous sommes ici!"
+  });
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+{% endblock %} 

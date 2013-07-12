@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Une erreur est survenue : {{ status_text }}</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="icon" href="{{ asset('bundles/ressources/favicon.ico') }}" type="image/x-icon" />
+
+        {% block stylesheets %}
+            <link href="{{ asset('bundles/ressources/css/main.css') }}" type="text/css" rel="stylesheet" />
+        {% endblock %}
+    </head>
+    <body>
+        <menu>
+            <section class="container_12">
+                <a href="{{ path('front_office_homepage') }}">
+                    <li {% if app.request.get('_route') == 'front_office_homepage' %}class="current"{% endif %}>Accueil</li>
+                </a>
+                <a href="{{ path('front_office_articlepage') }}">
+                    <li {% if app.request.get('_route') == 'front_office_articlepage' %}class="current"{% endif %}>Articles</li>
+                </a>
+                <a href="{{ path('front_office_photopage') }}">
+                    <li {% if app.request.get('_route') == 'front_office_photopage' %}class="current"{% endif %}>Photos</li>
+                </a>
+                <a href="{{ path('front_office_videopage') }}">
+                    <li {% if app.request.get('_route') == 'front_office_videopage' %}class="current"{% endif %}>Vidéos</li>
+                </a>
+                <a href="{{ path('front_office_podcastpage') }}">
+                    <li {% if app.request.get('_route') == 'front_office_podcastpage' %}class="current"{% endif %}>Podcasts</li>
+                </a>
+                <a href="{{ path('front_office_programmepage') }}">
+                    <li {% if app.request.get('_route') == 'front_office_programmepage' %}class="current"{% endif %}>Programme</li>
+                </a>
+            </section>
+        </menu>
+        <header>
+            <section class="container_12">
+                <section class="aff"></section>
+                <section class="logo_box">
+                    <img class="epsi" src="{{ asset('bundles/ressources/img/epsi-logo.png') }}" />
+                    <img class="polecom" src="{{ asset('bundles/ressources/img/polecom-logo.png') }}" />
+                </section>
+            </section>  
+        </header>
+
+        <section class="main container_12">
+
+            <h1>Oups! Une erreur est survenue</h1>
+            <h2>Le serveur a retourné une erreur "{{ status_code }} {{ status_text }}".</h2>
+
+         </section>
+         <footer class="container_12">
+            Pôlecom © 2013 {% if is_granted('IS_AUTHENTICATED_FULLY') %}<a href="{{ path('back_office_home') }}">Administration</a>{% endif %}
+        </footer>
+
+        {% block javascript %}{% endblock %}
+    </body>
+</html>

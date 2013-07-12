@@ -20,17 +20,21 @@ class ArticleType extends AbstractType
                     'toolbar' => array(
                         array(
                             'name'  => 'document',
-                            'items' => array('Source', '-', 'Save', 'NewPage', 'DocProps', 'Preview', '-', 'Templates'),
+                            'items' => array('Source', '-', 'NewPage', 'DocProps', 'Preview', '-', 'Maximize'),
                         ),
                         array(
                             'name'  => 'basicstyles',
                             'items' => array('Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat'),
                         ),
+                        array(
+                            'name'  => 'inserts',
+                            'items' => array('Image'),
+                        ),
                     ),
                     'uiColor' => '#000000',
+                    'filebrowserBrowseRoute' => 'elfinder',
                 ),
             ))
-            ->add('created', 'hidden',  array('data' => $date->format('d/m/Y h:i')))
         ;
     }
 

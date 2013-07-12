@@ -7,11 +7,8 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title>{% block title %}ArrasFilmFestival - Administration{% endblock %}</title>
-        <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
-
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
+          
         {% block stylesheets %}
         <link href="{{ asset('bundles/ressources/css/normalize.css') }}" type="text/css" rel="stylesheet" />
 		<link href="{{ asset('bundles/bootstrap/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
@@ -37,45 +34,61 @@
                     <div class="nav-collapse collapse">
                         <ul class="nav">
                             <li class="dropdown">
-                                <a href="{{ path('article') }}" class="dropdown-toggle" data-toggle="dropdown">Articles <b class="caret"></b></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Général <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ path('back_office_home') }}">Statistiques</a></li>
+                                    {% if is_granted('ROLE_POLECOM') %}
+                                    <li><a href="{{ path('back_office_information') }}">informations</a></li>
+                                    {% endif %}
+                                    <li><a href="{{ path('front_office_homepage') }}">Site</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Articles <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ path('article') }}">Mes ajouts</a></li>
                                     <li><a href="{{ path('article_new') }}">Ajouter</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown">
-                                <a href="{{ path('photo') }}" class="dropdown-toggle" data-toggle="dropdown">Photo <b class="caret"></b></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Photo <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ path('photo') }}">Mes ajouts</a></li>
                                     <li><a href="{{ path('photo_new') }}">Ajouter</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown">
-                                <a href="{{ path('video') }}" class="dropdown-toggle" data-toggle="dropdown">Vidéos <b class="caret"></b></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Vidéos <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ path('video') }}">Mes ajouts</a></li>
                                     <li><a href="{{ path('video_new') }}">Ajouter</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown">
-                                <a href="{{ path('podcast') }}" class="dropdown-toggle" data-toggle="dropdown">Podcasts <b class="caret"></b></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Podcasts <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ path('podcast') }}">Mes ajouts</a></li>
                                     <li><a href="{{ path('podcast_new') }}">Ajouter</a></li>
                                 </ul>
                             </li>
+                            {% if is_granted('ROLE_SUPER_ADMIN') %}
                             <li class="dropdown">
-                                <a href="{{ path('event') }}" class="dropdown-toggle" data-toggle="dropdown">Evénement <b class="caret"></b></a>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Evénement <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ path('event') }}">Consulter la liste</a></li>
                                     <li><a href="{{ path('event_new') }}">Ajouter</a></li>
                                 </ul>
                             </li>
-                            <li><a href="{{ path('front_office_homepage') }}">Site</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Gestion <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ path('back_office_gestion_validation') }}">Validations en attente</a></li>
+                                    <li><a href="{{ path('back_office_gestion_content') }}">Contenus du site</a></li>
+                                    <li><a href="{{ path('back_office_gestion_user') }}">Utilisateurs</a></li>
+                                </ul>
+                            </li>
+                            {% endif %}
                         </ul>
-                        <p class="navbar-text pull-right">
-                            @ PôleCom
-                        </p>
                     </div>
                 </div>
             </div>

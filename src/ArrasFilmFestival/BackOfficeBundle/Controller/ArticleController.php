@@ -4,6 +4,12 @@ namespace ArrasFilmFestival\BackOfficeBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+
+use \FOS\UserBundle\Model\UserInterface;
 
 use ArrasFilmFestival\BackOfficeBundle\Entity\Article;
 use ArrasFilmFestival\BackOfficeBundle\Form\ArticleType;
@@ -21,8 +27,11 @@ class ArticleController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.context')->getToken()->getUser();
+        $deleteForm = null;
 
-        $entities = $em->getRepository('BackOfficeBundle:Article')->findAll();
+        $query = $em->createQuery('SELECT p FROM BackOfficeBundle:Article p WHERE p.user = :id')->setParameter('id', $user->getId());
+        $entities = $query->getResult();
 
         return $this->render('BackOfficeBundle:Article:index.html.twig', array(
             'entities' => $entities,
@@ -72,13 +81,28 @@ class ArticleController extends Controller
     public function createAction(Request $request)
     {
         $entity  = new Article();
+        $user = $this->container->get('security.context')->getToken()->getUser();
         $form = $this->createForm(new ArticleType(), $entity);
         $form->bind($request);
+        $entity->setUser($user);
+        $entity->setValidate(0);
+        $entity->setCreated(new \DateTime('now'));
+
+        if ($this->get('security.context')->isGranted('ROLE_SUPER_ADMIN') || $this->get('security.context')->isGranted('ROLE_POLECOM')) {
+            $entity->setValidate(1);
+        }
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
+
+            $aclProvider = $this->get('security.acl.provider');
+            $objectIdentity = ObjectIdentity::fromDomainObject($entity);
+            $acl = $aclProvider->createAcl($objectIdentity);
+            $securityIdentity = UserSecurityIdentity::fromAccount($user);
+            $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+            $aclProvider->updateAcl($acl);
 
             return $this->redirect($this->generateUrl('article_show', array('id' => $entity->getId())));
         }
@@ -98,6 +122,13 @@ class ArticleController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('BackOfficeBundle:Article')->find($id);
+
+        if(!$this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) {
+            $securityContext = $this->get('security.context');
+            if (false === $securityContext->isGranted('EDIT', $entity)) {
+                throw new AccessDeniedException();
+            }
+        }
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Article entity.');

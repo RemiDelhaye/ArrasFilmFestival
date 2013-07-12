@@ -58,20 +58,21 @@ class Video
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="videos_update")
-     * @ORM\JoinColumn(name="user_update_id", referencedColumnName="id")
-     */
-    private $user_update;
-
-    /**
      * @Assert\File(
      *     maxSize = "55000k",
      *     maxSizeMessage = "Les fichiers ne doivent pas dépasser 55 Mo.",  
-     *     mimeTypes = {"video/avi", "video/flv"},
-     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format avi ou flv."
+     *     mimeTypes = {"video/avi", "video/flv", "video/mp4"},
+     *     mimeTypesMessage = "Les fichiers doivent impérativement être au format avi, mp4 ou flv."
      * )
      */
     private $video;
+
+    /**
+    * @var boolean
+    *
+    * @ORM\Column(name="isEnabled", type="boolean")
+    */
+    private $validate;
 
     /**
      * Get id
@@ -221,29 +222,6 @@ class Video
         return $this->video;
     }
 
-    /**
-     * Set user_update
-     *
-     * @param \ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate
-     * @return Video
-     */
-    public function setUserUpdate(\ArrasFilmFestival\BackOfficeBundle\Entity\User $userUpdate = null)
-    {
-        $this->user_update = $userUpdate;
-    
-        return $this;
-    }
-
-    /**
-     * Get user_update
-     *
-     * @return \ArrasFilmFestival\BackOfficeBundle\Entity\User 
-     */
-    public function getUserUpdate()
-    {
-        return $this->user_update;
-    }
-
     public function getAbsolutePath()
     {
         return null === $this->path
@@ -266,6 +244,14 @@ class Video
     protected function getUploadDir()
     {
         return 'uploads/videos';
+    }
+
+    /**
+     * @ORM\PreRemove()
+     */
+    public function storeFilenameForRemove()
+    {
+        $this->filenameForRemove = $this->getAbsolutePath();
     }
 
     /**
@@ -303,5 +289,28 @@ class Video
         if ($video = $this->getAbsolutePath()) {
             unlink($video);
         }
+    }
+
+    /**
+     * Set validate
+     *
+     * @param boolean $validate
+     * @return Video
+     */
+    public function setValidate($validate)
+    {
+        $this->validate = $validate;
+    
+        return $this;
+    }
+
+    /**
+     * Get validate
+     *
+     * @return boolean 
+     */
+    public function getValidate()
+    {
+        return $this->validate;
     }
 }

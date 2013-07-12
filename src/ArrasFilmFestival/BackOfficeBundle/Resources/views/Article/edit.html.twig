@@ -1,22 +1,36 @@
-<h1>Article edit</h1>
+{% extends '::template_back.html.twig' %}
 
-<form action="{{ path('article_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-    {{ form_widget(edit_form) }}
-    <p>
-        <button type="submit">Edit</button>
-    </p>
-</form>
+{% block body %}
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('article') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <form action="{{ path('article_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
+<div class="row">
+    <div class="span12">
+        <form class="form-horizontal" action="{{ path('article_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            <fieldset>
+                <legend>Modifier un article</legend>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.title, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.title, { 'attr': { 'class': 'span4' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    {{ form_label(edit_form.content, label|default(null), { 'label_attr': { 'class': 'control-label' } }) }}
+                    <div class="controls">
+                        {{ form_widget(edit_form.content, { 'attr': { 'placeholder': 'Votre article.', 'class': 'span12' } }) }}
+                    </div>
+                </div>
+
+                    {{ form_widget(edit_form._token) }}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="icon-ok icon-white"></i> Modifier l'article</button>
+                    <button type="reset" class="btn"><i class="icon-refresh"></i> Vider</button>
+                </div>
+            </fieldset>
         </form>
-    </li>
-</ul>
+    </div>
+</div>
+
+{% endblock %}

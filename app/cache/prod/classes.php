@@ -1772,7 +1772,7 @@ class Router extends BaseRouter implements WarmableInterface
                 foreach ($route->getRequirements() as $name => $value) {
                      $route->setRequirement($name, $this->resolveString($value));
                 }
-
+                $collection->setPrefix('/'.ltrim($this->resolveString($collection->getPrefix()), '/'));
                 $route->setPattern($this->resolveString($route->getPattern()));
             }
         }
@@ -3111,9 +3111,10 @@ class Request
         $clientIps[] = $ip;
 
         $trustedProxies = self::$trustProxy && !self::$trustedProxies ? array($ip) : self::$trustedProxies;
+        $ip = $clientIps[0];
         $clientIps = array_diff($clientIps, $trustedProxies);
 
-        return array_pop($clientIps);
+        return $clientIps ? array_pop($clientIps) : $ip;
     }
 
     
@@ -3161,8 +3162,14 @@ class Request
     
     public function getPort()
     {
-        if (self::$trustProxy && self::$trustedHeaders[self::HEADER_CLIENT_PORT] && $port = $this->headers->get(self::$trustedHeaders[self::HEADER_CLIENT_PORT])) {
-            return $port;
+        if (self::$trustProxy) {
+            if (self::$trustedHeaders[self::HEADER_CLIENT_PORT] && $port = $this->headers->get(self::$trustedHeaders[self::HEADER_CLIENT_PORT])) {
+                return $port;
+            }
+
+            if (self::$trustedHeaders[self::HEADER_CLIENT_PROTO] && 'https' === $this->headers->get(self::$trustedHeaders[self::HEADER_CLIENT_PROTO], 'http')) {
+                return 443;
+            }
         }
 
         return $this->server->get('SERVER_PORT');
@@ -3440,7 +3447,18 @@ class Request
             return $locales[0];
         }
 
-        $preferredLanguages = array_values(array_intersect($preferredLanguages, $locales));
+        $extendedPreferredLanguages = array();
+        foreach ($preferredLanguages as $language) {
+            $extendedPreferredLanguages[] = $language;
+            if (false !== $position = strpos($language, '_')) {
+                $superLanguage = substr($language, 0, $position);
+                if (!in_array($superLanguage, $preferredLanguages)) {
+                    $extendedPreferredLanguages[] = $superLanguage;
+                }
+            }
+        }
+
+        $preferredLanguages = array_values(array_intersect($extendedPreferredLanguages, $locales));
 
         return isset($preferredLanguages[0]) ? $preferredLanguages[0] : $locales[0];
     }
@@ -3545,12 +3563,19 @@ class Request
     {
         $requestUri = '';
 
-        if ($this->headers->has('X_ORIGINAL_URL') && false !== stripos(PHP_OS, 'WIN')) {
+        if ($this->headers->has('X_ORIGINAL_URL')) {
                         $requestUri = $this->headers->get('X_ORIGINAL_URL');
-        } elseif ($this->headers->has('X_REWRITE_URL') && false !== stripos(PHP_OS, 'WIN')) {
+            $this->headers->remove('X_ORIGINAL_URL');
+            $this->server->remove('HTTP_X_ORIGINAL_URL');
+            $this->server->remove('UNENCODED_URL');
+            $this->server->remove('IIS_WasUrlRewritten');
+        } elseif ($this->headers->has('X_REWRITE_URL')) {
                         $requestUri = $this->headers->get('X_REWRITE_URL');
+            $this->headers->remove('X_REWRITE_URL');
         } elseif ($this->server->get('IIS_WasUrlRewritten') == '1' && $this->server->get('UNENCODED_URL') != '') {
                         $requestUri = $this->server->get('UNENCODED_URL');
+            $this->server->remove('UNENCODED_URL');
+            $this->server->remove('IIS_WasUrlRewritten');
         } elseif ($this->server->has('REQUEST_URI')) {
             $requestUri = $this->server->get('REQUEST_URI');
                         $schemeAndHttpHost = $this->getSchemeAndHttpHost();
@@ -3562,7 +3587,10 @@ class Request
             if ('' != $this->server->get('QUERY_STRING')) {
                 $requestUri .= '?'.$this->server->get('QUERY_STRING');
             }
+            $this->server->remove('ORIG_PATH_INFO');
         }
+
+                $this->server->set('REQUEST_URI', $requestUri);
 
         return $requestUri;
     }
@@ -3857,6 +3885,13 @@ class Response
                 if ('1.0' == $this->getProtocolVersion() && 'no-cache' == $this->headers->get('Cache-Control')) {
             $this->headers->set('pragma', 'no-cache');
             $this->headers->set('expires', -1);
+        }
+
+        
+        if (false !== stripos($this->headers->get('Content-Disposition'), 'attachment') && preg_match('/MSIE (.*?);/i', $request->server->get('HTTP_USER_AGENT'), $match) == 1 && true === $request->isSecure()) {
+            if (intval(preg_replace("/(MSIE )(.*?);/", "$2", $match[0])) < 9) {
+                $this->headers->remove('Cache-Control');
+            }
         }
 
         return $this;
@@ -4799,7 +4834,7 @@ class EventDispatcher implements EventDispatcherInterface
         }
 
         foreach ($this->listeners[$eventName] as $priority => $listeners) {
-            if (false !== ($key = array_search($listener, $listeners))) {
+            if (false !== ($key = array_search($listener, $listeners, true))) {
                 unset($this->listeners[$eventName][$priority][$key], $this->sorted[$eventName]);
             }
         }
@@ -5586,8 +5621,10 @@ class FileLocator extends BaseFileLocator
     public function __construct(KernelInterface $kernel, $path = null, array $paths = array())
     {
         $this->kernel = $kernel;
-        $this->path = $path;
-        $paths[] = $path;
+        if (null !== $path) {
+            $this->path = $path;
+            $paths[] = $path;
+        }
 
         parent::__construct($paths);
     }
@@ -5708,6 +5745,55 @@ class ControllerResolver extends BaseControllerResolver
         }
 
         return array($controller, $method);
+    }
+}
+}
+ 
+
+
+
+namespace Symfony\Component\Security\Http
+{
+
+use Symfony\Component\HttpFoundation\Request;
+
+
+interface AccessMapInterface
+{
+    
+    public function getPatterns(Request $request);
+}
+}
+ 
+
+
+
+namespace Symfony\Component\Security\Http
+{
+
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+
+
+class AccessMap implements AccessMapInterface
+{
+    private $map = array();
+
+    
+    public function add(RequestMatcherInterface $requestMatcher, array $roles = array(), $channel = null)
+    {
+        $this->map[] = array($requestMatcher, $roles, $channel);
+    }
+
+    public function getPatterns(Request $request)
+    {
+        foreach ($this->map as $elements) {
+            if (null === $elements[0] || $elements[0]->matches($request)) {
+                return array($elements[1], $elements[2]);
+            }
+        }
+
+        return array(null, null);
     }
 }
 }
@@ -6450,12 +6536,11 @@ namespace
 /**
  * Stores the Twig configuration.
  *
- * @package twig
- * @author  Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class Twig_Environment
 {
-    const VERSION = '1.12.1';
+    const VERSION = '1.13.1';
     protected $charset;
     protected $loader;
     protected $debug;
@@ -6490,7 +6575,7 @@ class Twig_Environment
      *  * debug: When set to true, it automatically set "auto_reload" to true as
      *           well (default to false).
      *
-     *  * charset: The charset used by the templates (default to utf-8).
+     *  * charset: The charset used by the templates (default to UTF-8).
      *
      *  * base_template_class: The base template class to use for generated
      *                         templates (default to Twig_Template).
@@ -6534,7 +6619,7 @@ class Twig_Environment
             'optimizations'       => -1,
         ), $options);
         $this->debug              = (bool) $options['debug'];
-        $this->charset            = $options['charset'];
+        $this->charset            = strtoupper($options['charset']);
         $this->baseTemplateClass  = $options['base_template_class'];
         $this->autoReload         = null === $options['auto_reload'] ? $this->debug : (bool) $options['auto_reload'];
         $this->strictVariables    = (bool) $options['strict_variables'];
@@ -6679,7 +6764,7 @@ class Twig_Environment
      */
     public function getTemplateClass($name, $index = null)
     {
-        return $this->templateClassPrefix.md5($this->loader->getCacheKey($name)).(null === $index ? '' : '_'.$index);
+        return $this->templateClassPrefix.md5($this->getLoader()->getCacheKey($name)).(null === $index ? '' : '_'.$index);
     }
     /**
      * Gets the template class prefix.
@@ -6728,10 +6813,10 @@ class Twig_Environment
         }
         if (!class_exists($cls, false)) {
             if (false === $cache = $this->getCacheFilename($name)) {
-                eval('?>'.$this->compileSource($this->loader->getSource($name), $name));
+                eval('?>'.$this->compileSource($this->getLoader()->getSource($name), $name));
             } else {
                 if (!is_file($cache) || ($this->isAutoReload() && !$this->isTemplateFresh($name, filemtime($cache)))) {
-                    $this->writeCacheFile($cache, $this->compileSource($this->loader->getSource($name), $name));
+                    $this->writeCacheFile($cache, $this->compileSource($this->getLoader()->getSource($name), $name));
                 }
                 require_once $cache;
             }
@@ -6761,7 +6846,7 @@ class Twig_Environment
                 return false;
             }
         }
-        return $this->loader->isFresh($name, $time);
+        return $this->getLoader()->isFresh($name, $time);
     }
     public function resolveTemplate($names)
     {
@@ -6935,6 +7020,9 @@ class Twig_Environment
      */
     public function getLoader()
     {
+        if (null === $this->loader) {
+            throw new LogicException('You must set a loader first.');
+        }
         return $this->loader;
     }
     /**
@@ -6944,7 +7032,7 @@ class Twig_Environment
      */
     public function setCharset($charset)
     {
-        $this->charset = $charset;
+        $this->charset = strtoupper($charset);
     }
     /**
      * Gets the default template charset.
@@ -7111,15 +7199,15 @@ class Twig_Environment
      */
     public function addFilter($name, $filter = null)
     {
-        if ($this->extensionInitialized) {
-            throw new LogicException(sprintf('Unable to add filter "%s" as extensions have already been initialized.', $name));
-        }
         if (!$name instanceof Twig_SimpleFilter && !($filter instanceof Twig_SimpleFilter || $filter instanceof Twig_FilterInterface)) {
             throw new LogicException('A filter must be an instance of Twig_FilterInterface or Twig_SimpleFilter');
         }
         if ($name instanceof Twig_SimpleFilter) {
             $filter = $name;
             $name = $filter->getName();
+        }
+        if ($this->extensionInitialized) {
+            throw new LogicException(sprintf('Unable to add filter "%s" as extensions have already been initialized.', $name));
         }
         $this->staging->addFilter($name, $filter);
     }
@@ -7186,15 +7274,15 @@ class Twig_Environment
      */
     public function addTest($name, $test = null)
     {
-        if ($this->extensionInitialized) {
-            throw new LogicException(sprintf('Unable to add test "%s" as extensions have already been initialized.', $name));
-        }
         if (!$name instanceof Twig_SimpleTest && !($test instanceof Twig_SimpleTest || $test instanceof Twig_TestInterface)) {
             throw new LogicException('A test must be an instance of Twig_TestInterface or Twig_SimpleTest');
         }
         if ($name instanceof Twig_SimpleTest) {
             $test = $name;
             $name = $test->getName();
+        }
+        if ($this->extensionInitialized) {
+            throw new LogicException(sprintf('Unable to add test "%s" as extensions have already been initialized.', $name));
         }
         $this->staging->addTest($name, $test);
     }
@@ -7235,15 +7323,15 @@ class Twig_Environment
      */
     public function addFunction($name, $function = null)
     {
-        if ($this->extensionInitialized) {
-            throw new LogicException(sprintf('Unable to add function "%s" as extensions have already been initialized.', $name));
-        }
         if (!$name instanceof Twig_SimpleFunction && !($function instanceof Twig_SimpleFunction || $function instanceof Twig_FunctionInterface)) {
             throw new LogicException('A function must be an instance of Twig_FunctionInterface or Twig_SimpleFunction');
         }
         if ($name instanceof Twig_SimpleFunction) {
             $function = $name;
             $name = $function->getName();
+        }
+        if ($this->extensionInitialized) {
+            throw new LogicException(sprintf('Unable to add function "%s" as extensions have already been initialized.', $name));
         }
         $this->staging->addFunction($name, $function);
     }
@@ -7315,7 +7403,7 @@ class Twig_Environment
     {
         if ($this->extensionInitialized || $this->runtimeInitialized) {
             if (null === $this->globals) {
-                $this->initGlobals();
+                $this->globals = $this->initGlobals();
             }
             /* This condition must be uncommented in Twig 2.0
             if (!array_key_exists($name, $this->globals)) {
@@ -7337,8 +7425,11 @@ class Twig_Environment
      */
     public function getGlobals()
     {
-        if (null === $this->globals || !($this->runtimeInitialized || $this->extensionInitialized)) {
-            $this->initGlobals();
+        if (!$this->runtimeInitialized && !$this->extensionInitialized) {
+            return $this->initGlobals();
+        }
+        if (null === $this->globals) {
+            $this->globals = $this->initGlobals();
         }
         return $this->globals;
     }
@@ -7398,11 +7489,16 @@ class Twig_Environment
     }
     protected function initGlobals()
     {
-        $this->globals = array();
+        $globals = array();
         foreach ($this->extensions as $extension) {
-            $this->globals = array_merge($this->globals, $extension->getGlobals());
+            $extGlob = $extension->getGlobals();
+            if (!is_array($extGlob)) {
+                throw new UnexpectedValueException(sprintf('"%s::getGlobals()" must return an array of globals.', get_class($extension)));
+            }
+            $globals[] = $extGlob;
         }
-        $this->globals = array_merge($this->globals, $this->staging->getGlobals());
+        $globals[] = $this->staging->getGlobals();
+        return call_user_func_array('array_merge', $globals);
     }
     protected function initExtensions()
     {
@@ -7515,8 +7611,7 @@ namespace
 /**
  * Interface implemented by extension classes.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 interface Twig_ExtensionInterface
 {
@@ -7811,10 +7906,13 @@ class Twig_Extension_Core extends Twig_Extension
             new Twig_SimpleFilter('split', 'twig_split_filter'),
             new Twig_SimpleFilter('sort', 'twig_sort_filter'),
             new Twig_SimpleFilter('merge', 'twig_array_merge'),
+            new Twig_SimpleFilter('batch', 'twig_array_batch'),
             // string/array filters
             new Twig_SimpleFilter('reverse', 'twig_reverse_filter', array('needs_environment' => true)),
             new Twig_SimpleFilter('length', 'twig_length_filter', array('needs_environment' => true)),
             new Twig_SimpleFilter('slice', 'twig_slice', array('needs_environment' => true)),
+            new Twig_SimpleFilter('first', 'twig_first', array('needs_environment' => true)),
+            new Twig_SimpleFilter('last', 'twig_last', array('needs_environment' => true)),
             // iteration and runtime
             new Twig_SimpleFilter('default', '_twig_default_filter', array('node_class' => 'Twig_Node_Expression_Filter_Default')),
             new Twig_SimpleFilter('keys', 'twig_get_array_keys_filter'),
@@ -7823,8 +7921,8 @@ class Twig_Extension_Core extends Twig_Extension
             new Twig_SimpleFilter('e', 'twig_escape_filter', array('needs_environment' => true, 'is_safe_callback' => 'twig_escape_filter_is_safe')),
         );
         if (function_exists('mb_get_info')) {
-            $filters['upper'] = new Twig_Filter_Function('twig_upper_filter', array('needs_environment' => true));
-            $filters['lower'] = new Twig_Filter_Function('twig_lower_filter', array('needs_environment' => true));
+            $filters[] = new Twig_SimpleFilter('upper', 'twig_upper_filter', array('needs_environment' => true));
+            $filters[] = new Twig_SimpleFilter('lower', 'twig_lower_filter', array('needs_environment' => true));
         }
         return $filters;
     }
@@ -7841,7 +7939,7 @@ class Twig_Extension_Core extends Twig_Extension
             new Twig_SimpleFunction('cycle', 'twig_cycle'),
             new Twig_SimpleFunction('random', 'twig_random', array('needs_environment' => true)),
             new Twig_SimpleFunction('date', 'twig_date_converter', array('needs_environment' => true)),
-            new Twig_SimpleFunction('include', 'twig_include', array('needs_environment' => true, 'needs_context' => true)),
+            new Twig_SimpleFunction('include', 'twig_include', array('needs_environment' => true, 'needs_context' => true, 'is_safe' => array('all'))),
         );
     }
     /**
@@ -8090,11 +8188,13 @@ function twig_date_converter(Twig_Environment $env, $date = null, $timezone = nu
     }
     $asString = (string) $date;
     if (ctype_digit($asString) || (!empty($asString) && '-' === $asString[0] && ctype_digit(substr($asString, 1)))) {
-        $date = new DateTime('@'.$date);
-        $date->setTimezone($defaultTimezone);
-        return $date;
+        $date = '@'.$date;
     }
-    return new DateTime($date, $defaultTimezone);
+    $date = new DateTime($date, $defaultTimezone);
+    if (false !== $timezone) {
+        $date->setTimezone($defaultTimezone);
+    }
+    return $date;
 }
 /**
  * Number format filter.
@@ -8126,15 +8226,18 @@ function twig_number_format_filter(Twig_Environment $env, $number, $decimal = nu
     return number_format((float) $number, $decimal, $decimalPoint, $thousandSep);
 }
 /**
- * URL encodes a string.
+ * URL encodes a string as a path segment or an array as a query string.
  *
- * @param string $url A URL
- * @param bool   $raw true to use rawurlencode() instead of urlencode
+ * @param string|array $url A URL or an array of query parameters
+ * @param bool         $raw true to use rawurlencode() instead of urlencode
  *
  * @return string The URL encoded value
  */
 function twig_urlencode_filter($url, $raw = false)
 {
+    if (is_array($url)) {
+        return http_build_query($url, '', '&');
+    }
     if ($raw) {
         return rawurlencode($url);
     }
@@ -8230,6 +8333,32 @@ function twig_slice(Twig_Environment $env, $item, $start, $length = null, $prese
         return mb_substr($item, $start, null === $length ? mb_strlen($item, $charset) - $start : $length, $charset);
     }
     return null === $length ? substr($item, $start) : substr($item, $start, $length);
+}
+/**
+ * Returns the first element of the item.
+ *
+ * @param Twig_Environment $env  A Twig_Environment instance
+ * @param mixed            $item A variable
+ *
+ * @return mixed The first element of the item
+ */
+function twig_first(Twig_Environment $env, $item)
+{
+    $elements = twig_slice($env, $item, 0, 1, false);
+    return is_string($elements) ? $elements[0] : current($elements);
+}
+/**
+ * Returns the last element of the item.
+ *
+ * @param Twig_Environment $env  A Twig_Environment instance
+ * @param mixed            $item A variable
+ *
+ * @return mixed The last element of the item
+ */
+function twig_last(Twig_Environment $env, $item)
+{
+    $elements = twig_slice($env, $item, -1, 1, false);
+    return is_string($elements) ? $elements[0] : current($elements);
 }
 /**
  * Joins the values to a string.
@@ -8388,17 +8517,52 @@ function twig_in_filter($value, $compare)
  */
 function twig_escape_filter(Twig_Environment $env, $string, $strategy = 'html', $charset = null, $autoescape = false)
 {
-    if ($autoescape && is_object($string) && $string instanceof Twig_Markup) {
+    if ($autoescape && $string instanceof Twig_Markup) {
         return $string;
     }
-    if (!is_string($string) && !(is_object($string) && method_exists($string, '__toString'))) {
-        return $string;
+    if (!is_string($string)) {
+        if (is_object($string) && method_exists($string, '__toString')) {
+            $string = (string) $string;
+        } else {
+            return $string;
+        }
     }
     if (null === $charset) {
         $charset = $env->getCharset();
     }
-    $string = (string) $string;
     switch ($strategy) {
+        case 'html':
+            // see http://php.net/htmlspecialchars
+            // Using a static variable to avoid initializing the array
+            // each time the function is called. Moving the declaration on the
+            // top of the function slow downs other escaping strategies.
+            static $htmlspecialcharsCharsets = array(
+                'ISO-8859-1' => true, 'ISO8859-1' => true,
+                'ISO-8859-15' => true, 'ISO8859-15' => true,
+                'utf-8' => true, 'UTF-8' => true,
+                'CP866' => true, 'IBM866' => true, '866' => true,
+                'CP1251' => true, 'WINDOWS-1251' => true, 'WIN-1251' => true,
+                '1251' => true,
+                'CP1252' => true, 'WINDOWS-1252' => true, '1252' => true,
+                'KOI8-R' => true, 'KOI8-RU' => true, 'KOI8R' => true,
+                'BIG5' => true, '950' => true,
+                'GB2312' => true, '936' => true,
+                'BIG5-HKSCS' => true,
+                'SHIFT_JIS' => true, 'SJIS' => true, '932' => true,
+                'EUC-JP' => true, 'EUCJP' => true,
+                'ISO8859-5' => true, 'ISO-8859-5' => true, 'MACROMAN' => true,
+            );
+            if (isset($htmlspecialcharsCharsets[$charset])) {
+                return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+            }
+            if (isset($htmlspecialcharsCharsets[strtoupper($charset)])) {
+                // cache the lowercase variant for future iterations
+                $htmlspecialcharsCharsets[$charset] = true;
+                return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+            }
+            $string = twig_convert_encoding($string, 'UTF-8', $charset);
+            $string = htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            return twig_convert_encoding($string, $charset, 'UTF-8');
         case 'js':
             // escape all non-alphanumeric characters
             // into their \xHH or \uHHHH representations
@@ -8437,35 +8601,10 @@ function twig_escape_filter(Twig_Environment $env, $string, $strategy = 'html', 
                 $string = twig_convert_encoding($string, $charset, 'UTF-8');
             }
             return $string;
-        case 'html':
-            // see http://php.net/htmlspecialchars
-            // Using a static variable to avoid initializing the array
-            // each time the function is called. Moving the declaration on the
-            // top of the function slow downs other escaping strategies.
-            static $htmlspecialcharsCharsets = array(
-                'iso-8859-1' => true, 'iso8859-1' => true,
-                'iso-8859-15' => true, 'iso8859-15' => true,
-                'utf-8' => true,
-                'cp866' => true, 'ibm866' => true, '866' => true,
-                'cp1251' => true, 'windows-1251' => true, 'win-1251' => true,
-                '1251' => true,
-                'cp1252' => true, 'windows-1252' => true, '1252' => true,
-                'koi8-r' => true, 'koi8-ru' => true, 'koi8r' => true,
-                'big5' => true, '950' => true,
-                'gb2312' => true, '936' => true,
-                'big5-hkscs' => true,
-                'shift_jis' => true, 'sjis' => true, '932' => true,
-                'euc-jp' => true, 'eucjp' => true,
-                'iso8859-5' => true, 'iso-8859-5' => true, 'macroman' => true,
-            );
-            if (isset($htmlspecialcharsCharsets[strtolower($charset)])) {
-                return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-            }
-            $string = twig_convert_encoding($string, 'UTF-8', $charset);
-            $string = htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-            return twig_convert_encoding($string, $charset, 'UTF-8');
         case 'url':
-            if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            // hackish test to avoid version_compare that is much slower, this works unless PHP releases a 5.10.*
+            // at that point however PHP 5.2.* support can be removed
+            if (PHP_VERSION < '5.3.0') {
                 return str_replace('%7E', '~', rawurlencode($string));
             }
             return rawurlencode($string);
@@ -8740,11 +8879,11 @@ function twig_test_iterable($value)
 /**
  * Renders a template.
  *
- * @param string  template       The template to render
- * @param array   variables      The variables to pass to the template
- * @param Boolean with_context   Whether to pass the current context variables or not
- * @param Boolean ignore_missing Whether to ignore missing templates or not
- * @param Boolean sandboxed      Whether to sandbox the template or not
+ * @param string  $template       The template to render
+ * @param array   $variables      The variables to pass to the template
+ * @param Boolean $with_context   Whether to pass the current context variables or not
+ * @param Boolean $ignore_missing Whether to ignore missing templates or not
+ * @param Boolean $sandboxed      Whether to sandbox the template or not
  *
  * @return string The rendered template
  */
@@ -8760,7 +8899,7 @@ function twig_include(Twig_Environment $env, $context, $template, $variables = a
         }
     }
     try {
-        return $env->resolveTemplate($template)->display($variables);
+        return $env->resolveTemplate($template)->render($variables);
     } catch (Twig_Error_Loader $e) {
         if (!$ignoreMissing) {
             throw $e;
@@ -8780,11 +8919,35 @@ function twig_include(Twig_Environment $env, $context, $template, $variables = a
  */
 function twig_constant($constant, $object = null)
 {
-    if (!$object) {
-        return constant($constant);
+    if (null !== $object) {
+        $constant = get_class($object).'::'.$constant;
     }
-    $class = get_class($object);
-    return constant($class.'::'.$constant);
+    return constant($constant);
+}
+/**
+ * Batches item.
+ *
+ * @param array   $items An array of items
+ * @param integer $size  The size of the batch
+ * @param string  $fill  A string to fill missing items
+ *
+ * @return array
+ */
+function twig_array_batch($items, $size, $fill = null)
+{
+    if ($items instanceof Traversable) {
+        $items = iterator_to_array($items, false);
+    }
+    $size = ceil($size);
+    $result = array_chunk($items, $size, true);
+    if (null !== $fill) {
+        $last = count($result) - 1;
+        $result[$last] = array_merge(
+            $result[$last],
+            array_fill(0, $size - count($result[$last]), $fill)
+        );
+    }
+    return $result;
 }
 
 }
@@ -8940,8 +9103,7 @@ namespace
 /**
  * Interface all loaders must implement.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 interface Twig_LoaderInterface
 {
@@ -8994,8 +9156,7 @@ namespace
 /**
  * Marks a content as safe.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 class Twig_Markup implements Countable
 {
@@ -9032,8 +9193,7 @@ namespace
 /**
  * Interface implemented by all compiled templates.
  *
- * @package    twig
- * @author     Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  * @deprecated since 1.12 (to be removed in 2.0)
  */
 interface Twig_TemplateInterface
@@ -9081,8 +9241,7 @@ namespace
 /**
  * Default base class for compiled templates.
  *
- * @package twig
- * @author  Fabien Potencier <fabien@symfony.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  */
 abstract class Twig_Template implements Twig_TemplateInterface
 {
@@ -9373,18 +9532,18 @@ abstract class Twig_Template implements Twig_TemplateInterface
      */
     protected function getAttribute($object, $item, array $arguments = array(), $type = Twig_TemplateInterface::ANY_CALL, $isDefinedTest = false, $ignoreStrictCheck = false)
     {
-        $item = ctype_digit((string) $item) ? (int) $item : (string) $item;
         // array
         if (Twig_TemplateInterface::METHOD_CALL !== $type) {
-            if ((is_array($object) && array_key_exists($item, $object))
-                || ($object instanceof ArrayAccess && isset($object[$item]))
+            $arrayItem = is_bool($item) || is_float($item) ? (int) $item : $item;
+            if ((is_array($object) && array_key_exists($arrayItem, $object))
+                || ($object instanceof ArrayAccess && isset($object[$arrayItem]))
             ) {
                 if ($isDefinedTest) {
                     return true;
                 }
-                return $object[$item];
+                return $object[$arrayItem];
             }
-            if (Twig_TemplateInterface::ARRAY_CALL === $type) {
+            if (Twig_TemplateInterface::ARRAY_CALL === $type || !is_object($object)) {
                 if ($isDefinedTest) {
                     return false;
                 }
@@ -9392,11 +9551,13 @@ abstract class Twig_Template implements Twig_TemplateInterface
                     return null;
                 }
                 if (is_object($object)) {
-                    throw new Twig_Error_Runtime(sprintf('Key "%s" in object (with ArrayAccess) of type "%s" does not exist', $item, get_class($object)), -1, $this->getTemplateName());
+                    throw new Twig_Error_Runtime(sprintf('Key "%s" in object (with ArrayAccess) of type "%s" does not exist', $arrayItem, get_class($object)), -1, $this->getTemplateName());
                 } elseif (is_array($object)) {
-                    throw new Twig_Error_Runtime(sprintf('Key "%s" for array with keys "%s" does not exist', $item, implode(', ', array_keys($object))), -1, $this->getTemplateName());
+                    throw new Twig_Error_Runtime(sprintf('Key "%s" for array with keys "%s" does not exist', $arrayItem, implode(', ', array_keys($object))), -1, $this->getTemplateName());
+                } elseif (Twig_TemplateInterface::ARRAY_CALL === $type) {
+                    throw new Twig_Error_Runtime(sprintf('Impossible to access a key ("%s") on a %s variable ("%s")', $item, gettype($object), $object), -1, $this->getTemplateName());
                 } else {
-                    throw new Twig_Error_Runtime(sprintf('Impossible to access a key ("%s") on a "%s" variable', $item, gettype($object)), -1, $this->getTemplateName());
+                    throw new Twig_Error_Runtime(sprintf('Impossible to access an attribute ("%s") on a %s variable ("%s")', $item, gettype($object), $object), -1, $this->getTemplateName());
                 }
             }
         }
@@ -9407,12 +9568,12 @@ abstract class Twig_Template implements Twig_TemplateInterface
             if ($ignoreStrictCheck || !$this->env->isStrictVariables()) {
                 return null;
             }
-            throw new Twig_Error_Runtime(sprintf('Item "%s" for "%s" does not exist', $item, is_array($object) ? 'Array' : $object), -1, $this->getTemplateName());
+            throw new Twig_Error_Runtime(sprintf('Impossible to invoke a method ("%s") on a %s variable ("%s")', $item, gettype($object), $object), -1, $this->getTemplateName());
         }
         $class = get_class($object);
         // object property
         if (Twig_TemplateInterface::METHOD_CALL !== $type) {
-            if (isset($object->$item) || array_key_exists($item, $object)) {
+            if (isset($object->$item) || array_key_exists((string) $item, $object)) {
                 if ($isDefinedTest) {
                     return true;
                 }
@@ -9428,13 +9589,13 @@ abstract class Twig_Template implements Twig_TemplateInterface
         }
         $lcItem = strtolower($item);
         if (isset(self::$cache[$class]['methods'][$lcItem])) {
-            $method = $item;
+            $method = (string) $item;
         } elseif (isset(self::$cache[$class]['methods']['get'.$lcItem])) {
             $method = 'get'.$item;
         } elseif (isset(self::$cache[$class]['methods']['is'.$lcItem])) {
             $method = 'is'.$item;
         } elseif (isset(self::$cache[$class]['methods']['__call'])) {
-            $method = $item;
+            $method = (string) $item;
         } else {
             if ($isDefinedTest) {
                 return false;
@@ -10504,6 +10665,408 @@ class DebugHandler extends TestHandler implements DebugLoggerInterface
         }
 
         return $cnt;
+    }
+}
+}
+ 
+
+
+
+namespace Assetic
+{
+
+
+interface ValueSupplierInterface
+{
+    
+    public function getValues();
+}
+}
+ 
+
+namespace Symfony\Bundle\AsseticBundle
+{
+
+use Assetic\ValueSupplierInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+
+class DefaultValueSupplier implements ValueSupplierInterface
+{
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    public function getValues()
+    {
+        if (!$this->container->isScopeActive('request')) {
+            return array();
+        }
+
+        $request = $this->container->get('request');
+
+        return array(
+            'locale' => $request->getLocale(),
+            'env'    => $this->container->getParameter('kernel.environment'),
+        );
+    }
+}}
+ 
+
+
+
+namespace Assetic\Factory
+{
+
+use Assetic\Asset\AssetCollection;
+use Assetic\Asset\AssetCollectionInterface;
+use Assetic\Asset\AssetInterface;
+use Assetic\Asset\AssetReference;
+use Assetic\Asset\FileAsset;
+use Assetic\Asset\GlobAsset;
+use Assetic\Asset\HttpAsset;
+use Assetic\AssetManager;
+use Assetic\Factory\Worker\WorkerInterface;
+use Assetic\FilterManager;
+
+
+class AssetFactory
+{
+    private $root;
+    private $debug;
+    private $output;
+    private $workers;
+    private $am;
+    private $fm;
+
+    
+    public function __construct($root, $debug = false)
+    {
+        $this->root      = rtrim($root, '/');
+        $this->debug     = $debug;
+        $this->output    = 'assetic/*';
+        $this->workers   = array();
+    }
+
+    
+    public function setDebug($debug)
+    {
+        $this->debug = $debug;
+    }
+
+    
+    public function isDebug()
+    {
+        return $this->debug;
+    }
+
+    
+    public function setDefaultOutput($output)
+    {
+        $this->output = $output;
+    }
+
+    
+    public function addWorker(WorkerInterface $worker)
+    {
+        $this->workers[] = $worker;
+    }
+
+    
+    public function getAssetManager()
+    {
+        return $this->am;
+    }
+
+    
+    public function setAssetManager(AssetManager $am)
+    {
+        $this->am = $am;
+    }
+
+    
+    public function getFilterManager()
+    {
+        return $this->fm;
+    }
+
+    
+    public function setFilterManager(FilterManager $fm)
+    {
+        $this->fm = $fm;
+    }
+
+    
+    public function createAsset($inputs = array(), $filters = array(), array $options = array())
+    {
+        if (!is_array($inputs)) {
+            $inputs = array($inputs);
+        }
+
+        if (!is_array($filters)) {
+            $filters = array($filters);
+        }
+
+        if (!isset($options['output'])) {
+            $options['output'] = $this->output;
+        }
+
+        if (!isset($options['vars'])) {
+            $options['vars'] = array();
+        }
+
+        if (!isset($options['debug'])) {
+            $options['debug'] = $this->debug;
+        }
+
+        if (!isset($options['root'])) {
+            $options['root'] = array($this->root);
+        } else {
+            if (!is_array($options['root'])) {
+                $options['root'] = array($options['root']);
+            }
+
+            $options['root'][] = $this->root;
+        }
+
+        if (!isset($options['name'])) {
+            $options['name'] = $this->generateAssetName($inputs, $filters, $options);
+        }
+
+        $asset = $this->createAssetCollection(array(), $options);
+        $extensions = array();
+
+                foreach ($inputs as $input) {
+            if (is_array($input)) {
+                                $asset->add(call_user_func_array(array($this, 'createAsset'), $input));
+            } else {
+                $asset->add($this->parseInput($input, $options));
+                $extensions[pathinfo($input, PATHINFO_EXTENSION)] = true;
+            }
+        }
+
+                foreach ($filters as $filter) {
+            if ('?' != $filter[0]) {
+                $asset->ensureFilter($this->getFilter($filter));
+            } elseif (!$options['debug']) {
+                $asset->ensureFilter($this->getFilter(substr($filter, 1)));
+            }
+        }
+
+                if (!empty($options['vars'])) {
+            $toAdd = array();
+            foreach ($options['vars'] as $var) {
+                if (false !== strpos($options['output'], '{'.$var.'}')) {
+                    continue;
+                }
+
+                $toAdd[] = '{'.$var.'}';
+            }
+
+            if ($toAdd) {
+                $options['output'] = str_replace('*', '*.'.implode('.', $toAdd), $options['output']);
+            }
+        }
+
+                if (1 == count($extensions) && !pathinfo($options['output'], PATHINFO_EXTENSION) && $extension = key($extensions)) {
+            $options['output'] .= '.'.$extension;
+        }
+
+                $asset->setTargetPath(str_replace('*', $options['name'], $options['output']));
+
+                return $this->applyWorkers($asset);
+    }
+
+    public function generateAssetName($inputs, $filters, $options = array())
+    {
+        foreach (array_diff(array_keys($options), array('output', 'debug', 'root')) as $key) {
+            unset($options[$key]);
+        }
+
+        ksort($options);
+
+        return substr(sha1(serialize($inputs).serialize($filters).serialize($options)), 0, 7);
+    }
+
+    
+    protected function parseInput($input, array $options = array())
+    {
+        if ('@' == $input[0]) {
+            return $this->createAssetReference(substr($input, 1));
+        }
+
+        if (false !== strpos($input, '://') || 0 === strpos($input, '//')) {
+            return $this->createHttpAsset($input, $options['vars']);
+        }
+
+        if (self::isAbsolutePath($input)) {
+            if ($root = self::findRootDir($input, $options['root'])) {
+                $path = ltrim(substr($input, strlen($root)), '/');
+            } else {
+                $path = null;
+            }
+        } else {
+            $root  = $this->root;
+            $path  = $input;
+            $input = $this->root.'/'.$path;
+        }
+
+        if (false !== strpos($input, '*')) {
+            return $this->createGlobAsset($input, $root, $options['vars']);
+        }
+
+        return $this->createFileAsset($input, $root, $path, $options['vars']);
+    }
+
+    protected function createAssetCollection(array $assets = array(), array $options = array())
+    {
+        return new AssetCollection($assets, array(), null, isset($options['vars']) ? $options['vars'] : array());
+    }
+
+    protected function createAssetReference($name)
+    {
+        if (!$this->am) {
+            throw new \LogicException('There is no asset manager.');
+        }
+
+        return new AssetReference($this->am, $name);
+    }
+
+    protected function createHttpAsset($sourceUrl, $vars)
+    {
+        return new HttpAsset($sourceUrl, array(), false, $vars);
+    }
+
+    protected function createGlobAsset($glob, $root = null, $vars)
+    {
+        return new GlobAsset($glob, array(), $root, $vars);
+    }
+
+    protected function createFileAsset($source, $root = null, $path = null, $vars)
+    {
+        return new FileAsset($source, array(), $root, $path, $vars);
+    }
+
+    protected function getFilter($name)
+    {
+        if (!$this->fm) {
+            throw new \LogicException('There is no filter manager.');
+        }
+
+        return $this->fm->get($name);
+    }
+
+    
+    private function applyWorkers(AssetCollectionInterface $asset)
+    {
+        foreach ($asset as $leaf) {
+            foreach ($this->workers as $worker) {
+                $retval = $worker->process($leaf);
+
+                if ($retval instanceof AssetInterface && $leaf !== $retval) {
+                    $asset->replaceLeaf($leaf, $retval);
+                }
+            }
+        }
+
+        foreach ($this->workers as $worker) {
+            $retval = $worker->process($asset);
+
+            if ($retval instanceof AssetInterface) {
+                $asset = $retval;
+            }
+        }
+
+        return $asset instanceof AssetCollectionInterface ? $asset : $this->createAssetCollection(array($asset));
+    }
+
+    private static function isAbsolutePath($path)
+    {
+        return '/' == $path[0] || '\\' == $path[0] || (3 < strlen($path) && ctype_alpha($path[0]) && $path[1] == ':' && ('\\' == $path[2] || '/' == $path[2]));
+    }
+
+    
+    private static function findRootDir($path, array $roots)
+    {
+        foreach ($roots as $root) {
+            if (0 === strpos($path, $root)) {
+                return $root;
+            }
+        }
+    }
+}
+}
+ 
+
+
+
+namespace Symfony\Bundle\AsseticBundle\Factory
+{
+
+use Assetic\Factory\AssetFactory as BaseAssetFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
+
+
+class AssetFactory extends BaseAssetFactory
+{
+    private $kernel;
+    private $container;
+    private $parameterBag;
+
+    
+    public function __construct(KernelInterface $kernel, ContainerInterface $container, ParameterBagInterface $parameterBag, $baseDir, $debug = false)
+    {
+        $this->kernel = $kernel;
+        $this->container = $container;
+        $this->parameterBag = $parameterBag;
+
+        parent::__construct($baseDir, $debug);
+    }
+
+    
+    protected function parseInput($input, array $options = array())
+    {
+        $input = $this->parameterBag->resolveValue($input);
+
+                if ('@' == $input[0] && false !== strpos($input, '/')) {
+                        $bundle = substr($input, 1);
+            if (false !== $pos = strpos($bundle, '/')) {
+                $bundle = substr($bundle, 0, $pos);
+            }
+            $options['root'] = array($this->kernel->getBundle($bundle)->getPath());
+
+                        if (false !== $pos = strpos($input, '*')) {
+                                list($before, $after) = explode('*', $input, 2);
+                $input = $this->kernel->locateResource($before).'*'.$after;
+            } else {
+                $input = $this->kernel->locateResource($input);
+            }
+        }
+
+        return parent::parseInput($input, $options);
+    }
+
+    protected function createAssetReference($name)
+    {
+        if (!$this->getAssetManager()) {
+            $this->setAssetManager($this->container->get('assetic.asset_manager'));
+        }
+
+        return parent::createAssetReference($name);
+    }
+
+    protected function getFilter($name)
+    {
+        if (!$this->getFilterManager()) {
+            $this->setFilterManager($this->container->get('assetic.filter_manager'));
+        }
+
+        return parent::getFilter($name);
     }
 }
 }

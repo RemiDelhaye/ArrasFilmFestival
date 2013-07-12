@@ -25,7 +25,7 @@ class XliffFileLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoad()
     {
-        $loader = new XliffFileLoader();
+        $loader = $this->createLoader();
         $resource = __DIR__.'/../fixtures/resources.xlf';
         $catalogue = $loader->load($resource, 'en', 'domain1');
 
@@ -33,13 +33,34 @@ class XliffFileLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(new FileResource($resource)), $catalogue->getResources());
     }
 
+    public function testLoadWithResname()
+    {
+        $loader = $this->createLoader();
+        $catalogue = $loader->load(__DIR__.'/../fixtures/resname.xlf', 'en', 'domain1');
+
+        $this->assertEquals(array('foo' => 'bar', 'bar' => 'baz', 'baz' => 'foo'), $catalogue->all('domain1'));
+    }
+
     public function testIncompleteResource()
     {
-        $loader = new XliffFileLoader();
+        $loader = $this->createLoader();
         $catalogue = $loader->load(__DIR__.'/../fixtures/resources.xlf', 'en', 'domain1');
 
         $this->assertEquals(array('foo' => 'bar', 'key' => '', 'test' => 'with'), $catalogue->all('domain1'));
         $this->assertFalse($catalogue->has('extra', 'domain1'));
+    }
+
+    public function testEncoding()
+    {
+        if (!function_exists('iconv') && !function_exists('mb_convert_encoding')) {
+            $this->markTestSkipped('The iconv and mbstring extensions are not available.');
+        }
+
+        $loader = $this->createLoader();
+        $catalogue = $loader->load(__DIR__.'/../fixtures/encoding.xlf', 'en', 'domain1');
+
+        $this->assertEquals(utf8_decode('föö'), $catalogue->get('bar', 'domain1'));
+        $this->assertEquals(utf8_decode('bär'), $catalogue->get('foo', 'domain1'));
     }
 
     /**
@@ -47,7 +68,7 @@ class XliffFileLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadInvalidResource()
     {
-        $loader = new XliffFileLoader();
+        $loader = $this->createLoader();
         $catalogue = $loader->load(__DIR__.'/../fixtures/resources.php', 'en', 'domain1');
     }
 
@@ -56,7 +77,7 @@ class XliffFileLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadResourceDoesNotValidate()
     {
-        $loader = new XliffFileLoader();
+        $loader = $this->createLoader();
         $catalogue = $loader->load(__DIR__.'/../fixtures/non-valid.xlf', 'en', 'domain1');
     }
 
@@ -65,7 +86,7 @@ class XliffFileLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadThrowsAnExceptionIfFileNotLocal()
     {
-        $loader = new XliffFileLoader();
+        $loader = $this->createLoader();
         $resource = 'http://example.com/resources.xlf';
         $loader->load($resource, 'en', 'domain1');
     }
@@ -76,7 +97,12 @@ class XliffFileLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testDocTypeIsNotAllowed()
     {
-        $loader = new XliffFileLoader();
+        $loader = $this->createLoader();
         $loader->load(__DIR__.'/../fixtures/withdoctype.xlf', 'en', 'domain1');
+    }
+
+    protected function createLoader()
+    {
+        return new XliffFileLoader();
     }
 }

@@ -1,5 +1,10 @@
 {% extends '::template_back.html.twig' %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link href="http://vjs.zencdn.net/4.0/video-js.css" type="text/css" rel="stylesheet" />
+{% endblock %}
+
 {% block body %}
 
 {% set count = 0 %}
@@ -34,12 +39,12 @@
             <div class="caption">
                 <h5>{{ entity.title }}</h5>
             </div>
-            <video controls>
-                <source src="{{ asset('uploads/videos/') }}{{ entity.path }}" type="video/avi">
-                Votre navigateur n'est pas capable de supporter les mp3.
+            <video id="entity.title" class="video-js vjs-default-skin" controls preload="auto" width="290" height="200" data-setup='{{ asset('uploads/videos/') }}{{ entity.path }}'>
+                <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
+                <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
+                <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />
             </video>
             <div class="caption">
-                <p>{{ entity.content }}</p>
                 <p><small><em>{{ entity.created|date('d/m à H:i') }}</em></small></p>  
                 <p class="text-center">
                     <a href="{{ path('video_edit', { 'id': entity.id }) }}" class="btn" ><i class="icon-edit"></i> Modifier</a>
@@ -77,4 +82,10 @@
 
 </ul>
 
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+
+<script src="http://vjs.zencdn.net/4.0/video.js" type="text/javascript"></script>
 {% endblock %}

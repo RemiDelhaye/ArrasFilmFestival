@@ -2,4 +2,29 @@ back_office_home:
     pattern:  /
     defaults: { _controller: BackOfficeBundle:Page:home }
 
+back_office_information:
+    pattern:  /info
+    defaults: { _controller: BackOfficeBundle:Page:information }
+
+back_office_gestion_validation:
+    pattern:  /gestion/validation
+    defaults: { _controller: BackOfficeBundle:Gestion:validateindex }
+
+back_office_gestion_validation_confirm:
+    pattern:  /gestion/validate/{kind}/{id}
+    defaults: { _controller: "BackOfficeBundle:Gestion:validate" }
+
+back_office_gestion_content:
+    pattern:  /gestion/contenus
+    defaults: { _controller: BackOfficeBundle:Gestion:contenusindex }
+
+back_office_gestion_user:
+    pattern:  /gestion/users
+    defaults: { _controller: BackOfficeBundle:Gestion:usersindex }
+
+back_office_gestion_user_delete:
+    pattern:  /delete/{id}
+    defaults: { _controller: "BackOfficeBundle:Gestion:userdelete" }
+    requirements: { _method: post }
+
 

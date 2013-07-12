@@ -17,10 +17,12 @@
                 <legend>Modifier le podcast</legend>
 
                 <div class="control-group">
-                    <audio controls>
-                        <source src="{{ asset('uploads/audios/') }}{{entity.path}}" type="audio/mpeg">
-                        Votre navigateur n'est pas capable de supporter les fichiers audios.
-                     </audio>
+                    <div class="controls">
+                        <audio controls style="width: 290px;">
+                            <source src="{{ asset('uploads/audios/') }}{{entity.path}}" type="audio/mpeg">
+                            Votre navigateur n'est pas capable de supporter les fichiers audios.
+                         </audio>
+                    </div>
                 </div>
 
                 <div class="control-group">

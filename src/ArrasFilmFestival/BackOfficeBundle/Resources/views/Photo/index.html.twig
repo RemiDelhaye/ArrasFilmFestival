@@ -35,7 +35,7 @@
             <div class="caption">
                 <h5>{{ entity.title }}</h5>
             </div>
-            <img src="{{ picture|imagine_filter('back_thumb') }}" alt="{{ entity.title }}" />
+            <a href="{{ path('photo_edit', { 'id': entity.id }) }}"><img src="{{ picture|imagine_filter('back_thumb') }}" alt="{{ entity.title }}" /></a>
             <div class="caption">
                 <p>{{ entity.content }}</p>
                 <p><small><em>le {{ entity.created|date('d/m à H:i') }}</em></small></p>  

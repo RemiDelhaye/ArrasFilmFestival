@@ -14,6 +14,16 @@ What is this ?
 How to build me ?
 -----------------
 
+```
+curl -s https://getcomposer.org/installer | php
+php composer.phar install
+```
+
+```
+http://localhost/path-to-project/config.php
+http://localhost/path-to-project/app_dev.php
+```
+
 #### Requirements
 
  * **Symfony2 is only supported on PHP 5.3.3 and up.**

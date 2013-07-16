@@ -29,7 +29,7 @@
 				<p><small><i>Publié par {{ article.user.name }} {{ article.user.surname }} le {{ article.created|date('d/m à H:i') }}</i></small></p>
 			</div>
 		{% else %}
-			<p>Aucuns articles pour le moment.</p>
+			<p>Aucun article pour le moment.</p>
 		{% endfor %}
 	</section>
 </section>
@@ -39,7 +39,7 @@
 		<h2>Prochain évènement</h2>
 		<img src="{{ asset('bundles/ressources/img/event.jpg') }}" />
 		{% if event is empty %}
-			<p>Aucuns évènements prévus pour l'instant.</p>
+			<p>Aucun évènement prévus pour l'instant.</p>
 		{% else %}
 			<h4 class="text_center">{{ event.name }}</h4>
 			<p class="text_center"><small><i>{{ event.startDate|date('d/m à H:i') }} - {{ event.endDate|date('d/m à H:i') }}</i></small></p>

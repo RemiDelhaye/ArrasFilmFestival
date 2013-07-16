@@ -14,8 +14,11 @@
         <link rel="icon" href="{{ asset('bundles/ressources/favicon.ico') }}" type="image/x-icon" />
 
         {% block stylesheets %}
-            <link href="{{ asset('bundles/ressources/css/main.css') }}" type="text/css" rel="stylesheet" />
+        <link href="{{ asset('bundles/ressources/css/main.css') }}" type="text/css" rel="stylesheet" />
         {% endblock %}
+        <!--[if lt IE 9]>
+        <script src="{{ asset('bundles/ressources/js/html5shiv.js') }}"></script>
+        <![endif]-->
     </head>
     <body id="{% block id %}{% endblock %}"> 
         <menu>

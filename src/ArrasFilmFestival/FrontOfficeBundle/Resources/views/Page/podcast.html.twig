@@ -15,7 +15,7 @@
                 <source src="{{ asset('uploads/audios/') }}{{ podcast.path }}" type="audio/mpeg">
                 Votre navigateur n'est pas capable de supporter les fichiers audio.
             </audio>
-            <h6>{{ podcast.title }} <small>- postée par {{ podcast.user.name }} {{ podcast.user.surname }}</small></h6>
+            <h6>{{ podcast.title }} <small>- postée par {{ podcast.user.surname }} {{ podcast.user.name }}</small></h6>
         </article>
 </section>
 {% else %}

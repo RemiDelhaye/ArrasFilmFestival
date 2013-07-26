@@ -20,6 +20,57 @@
 
 <div class="clear"></div>
 
+<div class="flexslider-quotes">
+    <ul class="slides">
+  <li class="grid_4 column">
+  	<div class="wrap-quote">
+	<section class="presentation">
+		<h2>Derniers Articles</h2>
+		{% for article in articles %}
+			<div class="article_item">
+				<h6><a href="{{ path('front_office_showarticlepage', { 'slug': article.slug }) }}">{{ article.title }}</a></h6>
+				<p><small><i>Publié par {{ article.user.surname }} {{ article.user.name }} le {{ article.created|date('d/m à H:i') }}</i></small></p>
+			</div>
+		{% else %}
+			<p>Aucun article pour le moment.</p>
+		{% endfor %}
+	</section>
+	</div>
+</li>
+
+<li class="grid_4 column">
+	<div class="wrap-quote">
+	<section class="presentation">
+		<h2>Prochain évènement</h2>
+		<img src="{{ asset('bundles/ressources/img/event.jpg') }}" />
+		{% if event is empty %}
+			<p>Aucun évènement prévus pour l'instant.</p>
+		{% else %}
+			<h4 class="text_center">{{ event.name }}</h4>
+			<p class="text_center"><small><i>{{ event.startDate|date('d/m à H:i') }} - {{ event.endDate|date('d/m à H:i') }}</i></small></p>
+			<p class="text_center"><b>{{ event.lieu }}</b></p>
+			<p class="text_center">{{ event.description }}</p>
+		{% endif %}
+		<p class="text_center"><a href="">Consulter le programme</a></p>
+	</section>
+	</div>
+</li>
+
+<li class="grid_4 column">
+	<div class="wrap-quote">
+	<section class="presentation">
+		<h2>Informations</h2>
+		<p><b>Tél</b> : 03.02.04.05.06</p>
+		<p><b>Lieu</b> : Grande place, Arras, 62000</p>
+		<p><b>Informations supplémentaire</b> : Restauration possible sur place, parking de 100 places à proximité</p>
+	</section>
+	</div>
+</li>
+	</ul>
+</div>
+
+<div class="noflexslider-quotes">
+
 <section class="grid_4 column">
 	<section class="presentation">
 		<h2>Derniers Articles</h2>
@@ -29,7 +80,7 @@
 				<p><small><i>Publié par {{ article.user.name }} {{ article.user.surname }} le {{ article.created|date('d/m à H:i') }}</i></small></p>
 			</div>
 		{% else %}
-			<p>Aucun article pour le moment.</p>
+			<p>Aucuns articles pour le moment.</p>
 		{% endfor %}
 	</section>
 </section>
@@ -39,7 +90,7 @@
 		<h2>Prochain évènement</h2>
 		<img src="{{ asset('bundles/ressources/img/event.jpg') }}" />
 		{% if event is empty %}
-			<p>Aucun évènement prévus pour l'instant.</p>
+			<p>Aucuns évènements prévus pour l'instant.</p>
 		{% else %}
 			<h4 class="text_center">{{ event.name }}</h4>
 			<p class="text_center"><small><i>{{ event.startDate|date('d/m à H:i') }} - {{ event.endDate|date('d/m à H:i') }}</i></small></p>
@@ -59,6 +110,8 @@
 		<p><b>Informations supplémentaire</b> : Restauration possible sur place, parking de 100 places à proximité</p>
 	</section>
 </section>
+
+</div>
 
 {% endblock %}
 
@@ -85,4 +138,6 @@ function initialize() {
 
 google.maps.event.addDomListener(window, 'load', initialize);
 </script>
+<script type="text/javascript" src="{{ asset('bundles/ressources/js/jquery.flexslider.min.js') }}"></script>
+<script>$(window).load(function(){$(".flexslider-quotes").flexslider({animation:"slide",controlNav:true,directionNav:false,touch:true,slideshow:true,slideshowSpeed:3000})})</script>
 {% endblock %} 

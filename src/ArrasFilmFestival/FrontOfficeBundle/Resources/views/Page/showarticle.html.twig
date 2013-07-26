@@ -13,7 +13,7 @@
 	<article>
 		{{ article.content|raw }}
 		<div class="clearfix"></div>
-		<p class="info-data">Publié par <span class="info-data-name">{{ article.user.name }} {{ article.user.surname }}</span> pour <span class="info-data-name">{% if(article.user.team == 'polecom') %}le Pôlecom{% else %}Baudimont{% endif %}</span> le {{ article.created|date('d/m à H:i') }} <span class="info-data-right"><a href="{{ path('front_office_articlepage') }}">Retour aux articles</a></span></p>
+		<p class="info-data">Publié par <span class="info-data-name">{{ article.user.surname }} {{ article.user.name }}</span> pour <span class="info-data-name">{% if(article.user.team == 'polecom') %}le Pôlecom{% else %}Baudimont{% endif %}</span> le {{ article.created|date('d/m à H:i') }} <span class="info-data-right"><a href="{{ path('front_office_articlepage') }}">Retour aux articles</a></span></p>
 	</article>
 </section>
 

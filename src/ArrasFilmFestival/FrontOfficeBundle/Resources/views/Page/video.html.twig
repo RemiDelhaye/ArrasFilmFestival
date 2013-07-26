@@ -21,12 +21,12 @@
                 <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
                 <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />
             </video>
-			<h6>{{ video.title }} <small>- postée par {{ video.user.name }} {{ video.user.surname }}</small></h6>
+			<h6>{{ video.title }} <small>- postée par {{ video.user.surname }} {{ video.user.name }}</small></h6>
 		</article>
 </section>
 <div class="clearfix"></div>
 {% else %}
-	<p>Aucune vidéo pour le moment.</p>
+	<p>Aucune vidéos pour le moment.</p>
 {% endfor %}
 <div class="clearfix"></div>
 <div class="navigation">

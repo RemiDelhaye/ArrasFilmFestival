@@ -1,3 +1,4 @@
+
 {% extends '::template_front.html.twig' %}
 
 {% block title %}{{ parent() }}Articles{% if(app.request.query.get('page') > 1) %} - Page {{app.request.query.get('page')}}{% endif %}{% endblock %}
@@ -15,7 +16,7 @@
 		    <h3>{{ article.title }}</h3>
 		    <p>{{ article.content|raw }}</p>
 		    <div class="clearfix"></div>
-		<p class="info-data">Publié par <span class="info-data-name">{{ article.user.name }} {{ article.user.surname }}</span> pour <span class="info-data-name">{% if(article.user.team == 'polecom') %}le Pôlecom{% else %}Baudimont{% endif %}</span> le {{ article.created|date('d/m à H:i') }}</p>
+		<p class="info-data">Publié par <span class="info-data-name">{{ article.user.surname }} {{ article.user.name }}</span> pour <span class="info-data-name">{% if(article.user.team == 'polecom') %}le Pôlecom{% else %}Baudimont{% endif %}</span> le {{ article.created|date('d/m à H:i') }}</p>
 		</article>
 	</section>
 {% else %}

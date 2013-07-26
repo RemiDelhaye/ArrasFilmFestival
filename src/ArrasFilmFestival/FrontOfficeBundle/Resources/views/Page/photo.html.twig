@@ -17,7 +17,7 @@
 {% set picture = asset('uploads/photos/') ~ photo.path %}
 <section class="content_photo grid_4">
 		<article>
-			<a href="{{ picture|imagine_filter('front_widen') }}" rel="lightbox[AFF]" title="{{ photo.content }} - Postée par {{ photo.user.name}} {{ photo.user.surname }}"><img src="{{ picture|imagine_filter('front_thumb') }}" alt="{{ photo.title }}" /></a>
+			<a href="{{ picture|imagine_filter('front_widen') }}" rel="lightbox[AFF]" title="{{ photo.content }} - Postée par {{ photo.user.surname}} {{ photo.user.name }}"><img src="{{ picture|imagine_filter('front_thumb') }}" alt="{{ photo.title }}" /></a>
 			<h6>{{ photo.title }}</h6>
 		</article>
 </section>

@@ -4,6 +4,8 @@
 
 ***
 
+[![Build Status](https://travis-ci.org/RemiDelhaye/ArrasFilmFestival.png?branch=master)](https://travis-ci.org/RemiDelhaye/ArrasFilmFestival)
+
 What is this ?
 --------------
 
